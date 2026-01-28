@@ -1,13 +1,582 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>CareNexus AI - スタンドアロンデモ</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Partner - Asset Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-navy: #1A2B4C;
+            --medical-blue: #00A3C4;
+            --bg-color: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-main: #1A2B4C;
+            --text-sub: #6E7A8F;
+            --border-color: #E2E8F0;
+            --success-green: #2E7D32;
+            --alert-red: #D32F2F;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Mobile Container Simulator */
+        .app-container {
+            width: 100%;
+            max-width: 414px; /* iPhone Max width */
+            background-color: var(--bg-color);
+            position: relative;
+            padding-bottom: 80px; /* Tab bar space */
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--card-bg);
+            padding: 20px;
+            padding-top: 60px; /* Status bar space */
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info h1 {
+            font-size: 14px;
+            color: var(--text-sub);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .user-info .user-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .notification-bell {
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--alert-red);
+            border-radius: 50%;
+            border: 2px solid var(--card-bg);
+        }
+
+        /* --- Asset Card (Main) --- */
+        .asset-section {
+            padding: 24px 20px;
+        }
+
+        .asset-card {
+            background: linear-gradient(135deg, var(--primary-navy), #2C3E50);
+            border-radius: 12px;
+            padding: 24px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(26, 43, 76, 0.2);
+        }
+
+        .asset-label {
+            font-size: 12px;
+            opacity: 0.8;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .asset-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .unit-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 12px;
+        }
+
+        .unit-price {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .growth-rate {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            color: #4CAF50; /* Bright Green for dark bg */
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- Chart Section --- */
+        .chart-section {
+            background-color: var(--card-bg);
+            margin: 0 20px;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 120px;
+            position: relative;
+        }
+
+        /* Simple CSS Line Chart Simulation */
+        .chart-line {
+            fill: none;
+            stroke: var(--medical-blue);
+            stroke-width: 2;
+            vector-effect: non-scaling-stroke;
+        }
+
+        /* --- Action List --- */
+        .action-list {
+            padding: 20px;
+        }
+
+        .list-header {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .action-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.1s;
+        }
+
+        .action-item:active {
+            transform: scale(0.98);
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #F0F4F8;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 16px;
+            color: var(--primary-navy);
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .action-desc {
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0; /* Adjust for desktop view if needed */
+            width: 100%;
+            max-width: 414px; /* Sync with container */
+            height: 80px;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            padding-top: 16px;
+            z-index: 100;
+            /* Center nicely on desktop */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-sub);
+            text-decoration: none;
+            cursor: pointer;
+            width: 60px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-navy);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        /* --- Modal for Thanks (Hidden by default) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(26, 43, 76, 0.6);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-sheet {
+            width: 100%;
+            max-width: 414px;
+            background-color: var(--card-bg);
+            border-radius: 20px 20px 0 0;
+            padding: 24px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .colleague-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .colleague-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background-color: #E2E8F0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            color: var(--text-sub);
+            border: 2px solid transparent;
+        }
+
+        .colleague-item.selected .avatar {
+            border-color: var(--medical-blue);
+            background-color: #E0F7FA;
+            color: var(--medical-blue);
+        }
+
+        .c-name {
+            font-size: 10px;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .tag-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-btn.selected {
+            background-color: var(--primary-navy);
+            color: white;
+            border-color: var(--primary-navy);
+        }
+
+        .send-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary-navy);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #323232;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 12px;
+            display: none;
+            z-index: 300;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+    </style>
 </head>
 <body>
-<div id="app"></div>
-<script type="module" src="app.js"></script>
+
+    <div class="app-container">
+        
+        <header>
+            <div class="user-info">
+                <h1>Medical Partner</h1>
+                <div class="user-name">田中 優子 様</div>
+            </div>
+            <div class="notification-bell">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A2B4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <div class="notification-dot"></div>
+            </div>
+        </header>
+
+        <main>
+            <section class="asset-section">
+                <div class="asset-card">
+                    <div class="asset-label">現在の推定資産評価額</div>
+                    <div class="asset-value">¥ 1,240,500</div>
+                    <div class="unit-info">
+                        <div class="unit-price">1 Unit = ¥1,250</div>
+                        <div class="growth-rate">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                            +5.2%
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="chart-section">
+                <div class="section-header">
+                    <div class="section-title">Unit価格推移 (6ヶ月)</div>
+                </div>
+                <div class="chart-placeholder">
+                    <svg width="100%" height="100%" viewBox="0 0 300 100" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00A3C4;stop-opacity:0.2" />
+                                <stop offset="100%" style="stop-color:#00A3C4;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,80 Q50,70 100,50 T200,40 T300,10 V100 H0 Z" fill="url(#gradient)" />
+                        <path d="M0,80 Q50,70 100,50 T200,40 T300,10" class="chart-line" />
+                        <circle cx="300" cy="10" r="3" fill="#00A3C4" />
+                    </svg>
+                </div>
+            </section>
+
+            <section class="action-list">
+                <div class="list-header">Today's Updates</div>
+                
+                <div class="action-item">
+                    <div class="action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    </div>
+                    <div class="action-content">
+                        <div class="action-title">目標達成まであと2%</div>
+                        <div class="action-desc">A病棟 平均在院日数 KPI</div>
+                    </div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    </div>
+                    <div class="action-content">
+                        <div class="action-title">佐藤さんからのサンクス</div>
+                        <div class="action-desc">タグ: #チームワーク</div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <div class="nav-label">ホーム</div>
+            </div>
+            <div class="nav-item" onclick="openModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                <div class="nav-label">評価を送る</div>
+            </div>
+            <div class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                <div class="nav-label">資産詳細</div>
+            </div>
+        </nav>
+
+    </div>
+
+    <div class="modal-overlay" id="thanksModal">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <h3 style="font-size: 16px;">感謝・評価を送る</h3>
+                <div onclick="closeModal()" style="cursor:pointer; padding:5px;">✕</div>
+            </div>
+
+            <div style="font-size:12px; color:#6E7A8F; margin-bottom:10px;">送信相手を選択</div>
+            <div class="colleague-grid">
+                <div class="colleague-item selected">
+                    <div class="avatar">佐</div>
+                    <div class="c-name">佐藤</div>
+                </div>
+                <div class="colleague-item">
+                    <div class="avatar">鈴</div>
+                    <div class="c-name">鈴木</div>
+                </div>
+                <div class="colleague-item">
+                    <div class="avatar">高</div>
+                    <div class="c-name">高橋</div>
+                </div>
+                <div class="colleague-item">
+                    <div class="avatar">伊</div>
+                    <div class="c-name">伊藤</div>
+                </div>
+            </div>
+
+            <div style="font-size:12px; color:#6E7A8F; margin-bottom:10px;">評価タグを選択</div>
+            <div class="tag-container">
+                <button class="tag-btn selected" onclick="toggleTag(this)">チームワーク</button>
+                <button class="tag-btn" onclick="toggleTag(this)">患者ケア</button>
+                <button class="tag-btn" onclick="toggleTag(this)">業務改善</button>
+                <button class="tag-btn" onclick="toggleTag(this)">安全管理</button>
+            </div>
+
+            <button class="send-btn" onclick="sendThanks()">送信する</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">送信が完了しました</div>
+
+    <script>
+        // Modal Control
+        function openModal() {
+            document.getElementById('thanksModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('thanksModal').classList.remove('active');
+        }
+
+        // Tag Toggle (Simple Visual Feedback)
+        function toggleTag(btn) {
+            // Reset others for single selection demo, or toggle class for multi
+            document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        // Send Simulation
+        function sendThanks() {
+            closeModal();
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            
+            // Auto hide
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('thanksModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>
