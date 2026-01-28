@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Point Asset</title>
+    <title>Medical Partner - Team KPI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* 配色：信頼感(Navy)と清潔感(Teal/White) */
             --primary: #0F172A;
-            --accent: #0D9488;
+            --accent: #0D9488;  /* Teal */
             --bg: #F8FAFC;
             --card: #FFFFFF;
             --text: #334155;
             --sub: #64748B;
             --border: #E2E8F0;
             --gold: #D97706;
-            --blue-light: #E0F2FE;
-            --blue-text: #0284C7;
+            --success: #10B981;
+            --link-blue: #0284C7;
+            --calc-bg: #F1F5F9;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,123 +31,114 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            padding-bottom: 90px; /* ナビゲーションバーの分 */
+            padding-bottom: 90px;
         }
 
         .app-container {
             width: 100%;
-            max-width: 414px; /* スマホサイズ固定 */
+            max-width: 414px;
             background-color: var(--bg);
             min-height: 100vh;
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
-        /* --- ヘッダー --- */
+        /* --- Header --- */
         header {
             background-color: var(--card);
             padding: 50px 20px 16px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            position: sticky; top: 0; z-index: 100;
             border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .app-name { font-weight: 700; color: var(--primary); letter-spacing: 0.05em; font-size: 14px; }
-        .user-status { 
-            font-size: 11px; font-weight: 700; color: var(--gold); 
-            background: #FEF3C7; padding: 4px 10px; border-radius: 20px;
+        .app-name { font-weight: 700; color: var(--primary); font-size: 14px; letter-spacing: 0.05em; }
+        .ladder-badge { 
+            font-size: 11px; font-weight: 700; color: var(--link-blue); 
+            background: #E0F2FE; padding: 4px 10px; border-radius: 20px;
+            border: 1px solid rgba(2, 132, 199, 0.2);
         }
 
-        /* --- タブコンテンツ制御 --- */
-        .tab-content { display: none; padding: 20px; animation: fadeEffect 0.3s; }
+        /* --- Tab Logic --- */
+        .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
-        @keyframes fadeEffect { from {opacity: 0; transform: translateY(5px);} to {opacity: 1; transform: translateY(0);} }
+        @keyframes fadeIn { from {opacity:0; transform:translateY(5px);} to {opacity:1; transform:translateY(0);} }
 
-        /* --- 資産タブ (Asset) --- */
-        .asset-card {
-            background: var(--card); border-radius: 16px; padding: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid var(--border);
-            margin-bottom: 20px; text-align: center;
-        }
-        .total-label { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
-        .total-pts { 
-            font-family: 'Roboto Mono', monospace; font-size: 40px; font-weight: 700; color: var(--primary); 
-            letter-spacing: -1px; line-height: 1.2;
-        }
-        .unit { font-size: 16px; margin-left: 4px; color: var(--sub); }
+        /* ==================== 
+           TEAM TAB (Enhanced) 
+           ==================== */
         
-        .rate-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: var(--blue-light); color: var(--blue-text);
-            padding: 6px 12px; border-radius: 8px; margin-top: 12px;
-            font-size: 12px; font-weight: 700;
+        /* Period Selector */
+        .period-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
         }
+        .period-title { font-size: 18px; font-weight: 700; color: var(--primary); }
+        .period-tag { font-size: 12px; background: var(--primary); color: white; padding: 4px 10px; border-radius: 6px; }
 
-        /* ランク進捗（マイルドな表現） */
-        .rank-prog { margin-top: 24px; text-align: left; border-top: 1px solid var(--border); padding-top: 16px; }
-        .rank-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
-        .prog-bar { height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; }
-        .prog-fill { width: 70%; height: 100%; background: linear-gradient(90deg, #FCD34D, #D97706); }
-        .rank-note { font-size: 10px; color: var(--sub); margin-top: 6px; }
-
-        /* チャート風リスト */
-        .history-list { margin-top: 10px; }
-        .h-item { 
-            background: var(--card); padding: 16px; border-radius: 12px; 
-            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid var(--border);
+        /* KPI Card (The "Mission") */
+        .kpi-mission-card {
+            background: var(--card); border-radius: 16px; 
+            border: 1px solid var(--border); overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
-        .h-left { display: flex; flex-direction: column; }
-        .h-title { font-size: 13px; font-weight: 700; color: var(--primary); }
-        .h-date { font-size: 11px; color: var(--sub); margin-top: 2px; }
-        .h-val { font-family: 'Roboto Mono'; font-weight: 700; color: var(--accent); }
-
-        /* --- チームタブ (Team KPI) --- */
-        .kpi-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .kpi-box { 
-            background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid var(--border);
-        }
-        .kpi-label { font-size: 11px; color: var(--sub); margin-bottom: 8px; }
-        .kpi-num { font-family: 'Roboto Mono'; font-size: 20px; font-weight: 700; color: var(--primary); }
-        .kpi-eval { font-size: 10px; color: var(--accent); font-weight: 700; margin-top: 4px; display: block; }
         
-        .impact-news { background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid var(--border); }
-        .news-head { font-size: 13px; font-weight: 700; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;}
-        .news-row { margin-bottom: 12px; }
-        .news-tag { font-size: 10px; border: 1px solid var(--accent); color: var(--accent); padding: 2px 6px; border-radius: 4px; margin-right: 6px; }
-        .news-text { font-size: 12px; line-height: 1.5; display: inline; }
-        .news-up { display: block; text-align: right; color: var(--accent); font-size: 11px; font-weight: 700; margin-top: 4px; }
-
-        /* --- 感謝タブ (Thanks Feed) --- */
-        .feed-item { 
-            background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; 
+        .mission-header {
+            padding: 16px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .feed-top { display: flex; align-items: center; margin-bottom: 10px; }
-        .avatar { width: 32px; height: 32px; background: #E2E8F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-right: 10px; }
-        .feed-who { font-size: 12px; font-weight: 700; }
-        .feed-who span { font-weight: 400; color: var(--sub); font-size: 11px; }
-        .feed-msg { font-size: 13px; line-height: 1.6; color: var(--text); }
-        .feed-tag { display: inline-block; background: var(--blue-light); color: var(--blue-text); font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-bottom: 6px; font-weight: 700; }
+        .mh-title { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .mh-icon { color: var(--accent); }
+        .status-pill { font-size: 10px; background: #DCFCE7; color: #15803D; padding: 3px 8px; border-radius: 12px; font-weight: 700; }
 
-        /* --- ナビゲーションバー --- */
+        .mission-body { padding: 20px; }
+        
+        /* Progress Visualization */
+        .kpi-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+        .kpi-main-val { font-family: 'Roboto Mono'; font-size: 28px; font-weight: 700; color: var(--primary); line-height: 1; }
+        .kpi-target { font-size: 11px; color: var(--sub); text-align: right; }
+        
+        .progress-track { height: 8px; background: #F1F5F9; border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
+        .progress-bar { height: 100%; background: var(--accent); border-radius: 4px; width: 0; transition: width 1s ease-out; }
+
+        /* The "Calculation Receipt" (Cause & Effect) */
+        .calc-box {
+            background: var(--calc-bg); border-radius: 8px; padding: 12px;
+            margin-top: 12px;
+        }
+        .calc-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 11px; color: var(--sub); margin-bottom: 6px;
+        }
+        .calc-row.final {
+            margin-top: 8px; padding-top: 8px; border-top: 1px dashed #CBD5E1;
+            font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 0;
+        }
+        .calc-val { font-family: 'Roboto Mono'; font-weight: 700; }
+        .calc-highlight { color: var(--accent); }
+        
+        /* Interactive "Why?" Detail */
+        .why-toggle {
+            text-align: center; font-size: 11px; color: var(--link-blue); 
+            margin-top: 12px; cursor: pointer; text-decoration: underline;
+        }
+
+        /* Secondary KPI (Smaller) */
+        .sub-kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .sub-kpi { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+        .sk-label { font-size: 10px; color: var(--sub); margin-bottom: 4px; }
+        .sk-val { font-family: 'Roboto Mono'; font-size: 16px; font-weight: 700; }
+
+        /* --- Nav --- */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
             background: var(--card); border-top: 1px solid var(--border);
-            height: 80px; display: flex; justify-content: space-around;
-            padding-bottom: 20px; z-index: 200;
+            display: flex; justify-content: space-around; padding-bottom: 20px; z-index: 200;
         }
-        .nav-btn {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--sub); cursor: pointer; gap: 4px;
-        }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--sub); cursor: pointer; }
         .nav-btn.active { color: var(--accent); }
         .nav-label { font-size: 10px; font-weight: 500; }
-
-        /* SVGアイコン用 */
-        svg { stroke-width: 2px; width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        svg { width: 24px; height: 24px; stroke-width: 2px; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
     </style>
 </head>
@@ -156,137 +147,130 @@
 <div class="app-container">
 
     <header>
-        <div class="app-name">HOSPITAL ASSET</div>
-        <div class="user-status">★ Silver Member</div>
+        <div class="app-name">MEDICAL PARTNER</div>
+        <div class="ladder-badge">Level III (Leader)</div>
     </header>
 
-    <div id="tab-asset" class="tab-content active">
-        <div class="asset-card">
-            <div class="total-label">現在の保有ポイント</div>
-            <div class="total-pts">12,500<span class="unit">pts</span></div>
-            
-            <div class="rate-badge">
-                レート: 1.25倍 (運用益 +25%) 📈
+    <div id="tab-team" class="tab-content active">
+        
+        <div class="period-header">
+            <div>
+                <div style="font-size:11px; color:#64748B;">Target Period</div>
+                <div class="period-title">2025 Oct</div>
             </div>
+            <div class="period-tag">確定済</div>
+        </div>
 
-            <div class="rank-prog">
-                <div class="rank-header">
-                    <span>Next Rank: Gold</span>
-                    <span>あと 250 pts</span>
+        <div class="kpi-mission-card">
+            <div class="mission-header">
+                <div class="mh-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    平均在院日数 (ALOS)
                 </div>
-                <div class="prog-bar"><div class="prog-fill"></div></div>
-                <div class="rank-note">※ Goldになると長期勤続ボーナスとして交換率UP</div>
+                <span class="status-pill">GOAL 達成</span>
             </div>
-        </div>
-
-        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:8px;">最近の履歴</div>
-        
-        <div class="h-item">
-            <div class="h-left">
-                <div class="h-title">A病棟 目標達成配当</div>
-                <div class="h-date">平均在院日数 短縮成功</div>
-            </div>
-            <div class="h-val">+ 800 pts</div>
-        </div>
-        <div class="h-item">
-            <div class="h-left">
-                <div class="h-title">サンクスポイント受信</div>
-                <div class="h-date">From: 佐藤 / 田中 他</div>
-            </div>
-            <div class="h-val">+ 150 pts</div>
-        </div>
-    </div>
-
-    <div id="tab-team" class="tab-content">
-        <div style="font-size:13px; font-weight:700; margin-bottom:12px;">現在の病棟KPI (レート変動要因)</div>
-        
-        <div class="kpi-container">
-            <div class="kpi-box">
-                <div class="kpi-label">平均在院日数</div>
-                <div class="kpi-num">13.2日</div>
-                <span class="kpi-eval">目標達成 (貢献度 大)</span>
-            </div>
-            <div class="kpi-box">
-                <div class="kpi-label">材料費削減率</div>
-                <div class="kpi-num">8.5%</div>
-                <span class="kpi-eval">S評価 (貢献度 特大)</span>
-            </div>
-        </div>
-
-        <div class="impact-news">
-            <div class="news-head">業績ニュース</div>
             
-            <div class="news-row">
-                <div><span class="news-tag">コスト</span><div class="news-text">ディスポ製品の見直しにより、病棟経費が大幅削減されました。</div></div>
-                <span class="news-up">レート +0.15 UP ⤴</span>
-            </div>
-            <div style="border-top:1px solid #F1F5F9; margin:8px 0;"></div>
-            <div class="news-row">
-                <div><span class="news-tag">安全</span><div class="news-text">転倒転落インシデントの対応完了率100%を維持しています。</div></div>
-                <span class="news-up">レート維持（減点なし） ✅</span>
+            <div class="mission-body">
+                <div class="kpi-row">
+                    <div class="kpi-main-val">13.2<span style="font-size:14px; margin-left:4px;">日</span></div>
+                    <div class="kpi-target">Target: 14.0日<br><span style="color:var(--success)">-0.8日 短縮成功</span></div>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-bar" style="width: 100%;"></div>
+                </div>
+
+                <div class="calc-box">
+                    <div class="calc-row">
+                        <span>チーム成果 (短縮ボーナス)</span>
+                        <span class="calc-val">100,000 pts</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>÷ スタッフ数 (配分)</span>
+                        <span class="calc-val">÷ 20名</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>× レベル係数 (Level III)</span>
+                        <span class="calc-val calc-highlight">× 1.2倍</span>
+                    </div>
+                    <div class="calc-row final">
+                        <span>YOU EARNED</span>
+                        <span class="calc-val" style="color:var(--accent)">+ 6,000 pts</span>
+                    </div>
+                </div>
+                
+                <div class="why-toggle" onclick="alert('詳細画面：\n・早期退院支援件数：15件\n・地域連携パス利用率：85%\n\nチーム全員の協力で達成しました！')">
+                    なぜこの結果が出た？ (詳細)
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="tab-thanks" class="tab-content">
-        <div style="font-size:13px; font-weight:700; margin-bottom:12px;">チームの感謝フィード</div>
-
-        <div class="feed-item">
-            <div class="feed-top">
-                <div class="avatar">佐</div>
-                <div class="feed-who">佐藤 麻衣 <span>→ 田中 優子</span></div>
+        <div class="kpi-mission-card">
+            <div class="mission-header">
+                <div class="mh-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    材料費削減プロジェクト
+                </div>
+                <span class="status-pill" style="background:#FEF3C7; color:#B45309">進行中</span>
             </div>
-            <div class="feed-tag">#患者ファースト</div>
-            <div class="feed-msg">急変時のルート確保、手伝ってくれて助かりました！冷静な対応さすがです。</div>
+            
+            <div class="mission-body">
+                <div class="kpi-row">
+                    <div class="kpi-main-val">8.5<span style="font-size:14px; margin-left:4px;">万円</span></div>
+                    <div class="kpi-target">Target: 5.0万円<br><span style="color:var(--success)">170% 達成中</span></div>
+                </div>
+                
+                <div class="progress-track">
+                    <div class="progress-bar" style="width: 100%; background:#F59E0B;"></div>
+                </div>
+
+                <div class="calc-box">
+                    <div class="calc-row">
+                        <span>予測配当プール</span>
+                        <span class="calc-val">50,000 pts</span>
+                    </div>
+                    <div class="calc-row final">
+                        <span>あなたの予測獲得分</span>
+                        <span class="calc-val" style="color:#F59E0B">??? pts</span>
+                    </div>
+                </div>
+                <div style="font-size:10px; color:#94A3B8; margin-top:8px; text-align:right;">
+                    ※ 月末に確定します
+                </div>
+            </div>
         </div>
 
-        <div class="feed-item">
-            <div class="feed-top">
-                <div class="avatar">高</div>
-                <div class="feed-who">高橋 健太 <span>→ チーム全体</span></div>
+        <div class="sub-kpi-grid">
+            <div class="sub-kpi">
+                <div class="sk-label">病床稼働率</div>
+                <div class="sk-val" style="color:var(--primary)">94.5%</div>
+                <div style="font-size:10px; color:var(--success);">Target Clear</div>
             </div>
-            <div class="feed-tag">#業務改善</div>
-            <div class="feed-msg">カートの配置換えの提案、動線がスムーズになってすごく良いです。ありがとう！</div>
+            <div class="sub-kpi">
+                <div class="sk-label">インシデント報告</div>
+                <div class="sk-val" style="color:var(--primary)">100%</div>
+                <div style="font-size:10px; color:var(--success);">提出完了</div>
+            </div>
         </div>
+
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-btn active" onclick="switchTab('asset', this)">
+        <div class="nav-btn" onclick="alert('資産タブへ')">
             <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
             <div class="nav-label">資産</div>
         </div>
-        <div class="nav-btn" onclick="switchTab('team', this)">
+        <div class="nav-btn active">
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             <div class="nav-label">チーム</div>
         </div>
-        <div class="nav-btn" onclick="switchTab('thanks', this)">
+        <div class="nav-btn" onclick="alert('感謝タブへ')">
             <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             <div class="nav-label">感謝</div>
         </div>
     </nav>
 
 </div>
-
-<script>
-    // タブ切り替えのロジック
-    function switchTab(tabName, element) {
-        // 1. 全てのタブコンテンツを隠す
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-
-        // 2. 選択されたタブコンテンツを表示する
-        document.getElementById('tab-' + tabName).classList.add('active');
-
-        // 3. ナビゲーションボタンの色をリセット
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-
-        // 4. 押されたボタンをアクティブ色にする
-        element.classList.add('active');
-    }
-</script>
 
 </body>
 </html>
