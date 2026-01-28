@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Partner - Investor Demo</title>
+    <title>Medical Partner - Point Asset</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Branding Colors */
-            --primary-navy: #0F172A;     /* Deep Navy for Trust */
-            --medical-blue: #0284C7;     /* Clinical Blue */
-            --medical-light: #E0F2FE;    /* Background Accent */
-            --success-green: #10B981;    /* Growth */
-            --warning-orange: #F59E0B;   /* Attention */
-            --text-main: #1E293B;
-            --text-sub: #64748B;
-            --bg-body: #F1F5F9;
+            /* Trust & Clean Tech Colors */
+            --primary-navy: #0F172A;
+            --accent-teal: #0D9488;     /* Sophisticated Teal for Points */
+            --chart-bg: #F0FDFA;
+            --bg-body: #F8FAFC;
             --card-bg: #FFFFFF;
+            --text-main: #334155;
+            --text-sub: #64748B;
             --divider: #E2E8F0;
+            --gold: #D97706;            /* For Ranking */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
@@ -32,7 +31,7 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            padding-bottom: 80px; /* Tab bar space */
+            padding-bottom: 90px;
         }
 
         .app-frame {
@@ -41,125 +40,183 @@
             background-color: var(--bg-body);
             min-height: 100vh;
             position: relative;
-            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            box-shadow: 0 0 30px rgba(0,0,0,0.05);
         }
 
         /* --- Header --- */
         header {
             background-color: var(--card-bg);
-            padding: 50px 20px 16px 20px;
+            padding: 50px 24px 16px 24px;
             position: sticky;
             top: 0;
             z-index: 100;
             border-bottom: 1px solid var(--divider);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .header-row { display: flex; justify-content: space-between; align-items: center; }
-        .app-logo { font-size: 16px; font-weight: 700; color: var(--primary-navy); letter-spacing: 0.05em; }
-        .user-badge { font-size: 12px; background: var(--medical-light); color: var(--medical-blue); padding: 4px 8px; border-radius: 4px; font-weight: 500; }
+        .header-title { font-size: 14px; font-weight: 700; color: var(--primary-navy); letter-spacing: 0.05em; }
+        .user-rank { 
+            font-size: 11px; 
+            background: linear-gradient(135deg, #FEF3C7, #FCD34D); 
+            color: #92400E; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-weight: 700; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px;
+        }
 
-        /* --- Tabs Logic --- */
-        .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s; }
+        /* --- Tab Content --- */
+        .tab-content { display: none; padding: 20px; animation: fadeIn 0.4s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ==================== 
-           Tab 1: ASSET (Financial)
+           ASSET CARD (Point System)
            ==================== */
-        .asset-card {
-            background: linear-gradient(145deg, var(--primary-navy), #1E293B);
-            color: white;
+        .point-card {
+            background: var(--card-bg);
+            border-radius: 20px;
             padding: 24px;
-            border-radius: 16px;
+            box-shadow: 0 10px 30px -10px rgba(13, 148, 136, 0.15);
             margin-bottom: 24px;
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(13, 148, 136, 0.1);
+            position: relative;
+            overflow: hidden;
         }
-        .asset-label { font-size: 11px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
-        .asset-amount { font-family: 'Roboto Mono', monospace; font-size: 36px; font-weight: 700; margin-bottom: 20px; letter-spacing: -1px; }
-        
-        /* Vesting Bar (Retention Hook) */
-        .vesting-container { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.15); }
-        .vesting-labels { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 6px; opacity: 0.9; }
-        .progress-track { background: rgba(255,255,255,0.2); height: 6px; border-radius: 3px; overflow: hidden; }
-        .progress-fill { background: var(--success-green); height: 100%; width: 65%; } /* 65% Vested */
-        .vesting-note { font-size: 10px; margin-top: 8px; opacity: 0.7; text-align: right; }
+        /* Decorative circle */
+        .point-card::after {
+            content: ''; position: absolute; top: -50px; right: -50px;
+            width: 150px; height: 150px; background: var(--accent-teal);
+            opacity: 0.05; border-radius: 50%;
+        }
 
-        /* Ledger History */
-        .section-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--text-sub); display: flex; justify-content: space-between; align-items: center; }
-        .history-list { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--divider); overflow: hidden; }
-        .history-item { padding: 16px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
-        .history-item:last-child { border-bottom: none; }
-        .h-info { display: flex; flex-direction: column; gap: 4px; }
-        .h-title { font-size: 13px; font-weight: 700; }
-        .h-date { font-size: 11px; color: var(--text-sub); }
-        .h-amount { font-family: 'Roboto Mono', monospace; font-size: 14px; font-weight: 700; color: var(--primary-navy); }
-        .h-amount.plus { color: var(--success-green); }
+        .pc-label { font-size: 12px; color: var(--text-sub); margin-bottom: 8px; font-weight: 500; }
+        .pc-value { 
+            font-family: 'Roboto Mono', monospace; 
+            font-size: 42px; 
+            font-weight: 700; 
+            color: var(--primary-navy); 
+            line-height: 1;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        .pc-unit { font-size: 16px; color: var(--text-sub); margin-left: 4px; font-weight: 500; }
 
-        /* ==================== 
-           Tab 2: TEAM (Performance)
-           ==================== */
-        .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .kpi-card { background: var(--card-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--divider); }
-        .kpi-title { font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
-        .kpi-value { font-family: 'Roboto Mono', monospace; font-size: 20px; font-weight: 700; color: var(--primary-navy); margin-bottom: 8px; }
-        .kpi-target { font-size: 10px; color: var(--text-sub); display: flex; justify-content: space-between; }
-        .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #DCFCE7; color: #166534; font-weight: 700; }
-
-        .stock-news { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--divider); padding: 0 16px; }
-        .news-item { padding: 16px 0; border-bottom: 1px solid var(--divider); }
-        .news-item:last-child { border-bottom: none; }
-        .news-tag { display: inline-block; font-size: 10px; font-weight: 700; color: var(--medical-blue); border: 1px solid var(--medical-blue); padding: 2px 6px; border-radius: 4px; margin-bottom: 6px; }
-        .news-text { font-size: 13px; line-height: 1.5; }
-        .news-impact { font-size: 12px; font-weight: 700; color: var(--success-green); margin-top: 4px; display: block; }
-
-        /* ==================== 
-           Tab 3: FEED (Culture)
-           ==================== */
-        .feed-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--divider); padding: 16px; margin-bottom: 12px; }
-        .feed-header { display: flex; align-items: center; margin-bottom: 12px; }
-        .avatar { width: 36px; height: 36px; border-radius: 50%; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-right: 12px; color: var(--text-sub); }
-        .feed-meta { flex: 1; }
-        .feed-names { font-size: 13px; font-weight: 700; }
-        .feed-names span { color: var(--text-sub); font-weight: 400; font-size: 12px; }
-        .feed-time { font-size: 10px; color: var(--text-sub); margin-top: 2px; }
-        
-        .tag-pill { background: var(--medical-light); color: var(--medical-blue); font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; display: inline-block; margin-bottom: 8px; }
-        .feed-msg { font-size: 13px; line-height: 1.6; color: var(--text-main); }
-        
-        /* --- Floating Action Button (FAB) --- */
-        .fab {
-            position: fixed;
-            bottom: 96px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background-color: var(--primary-navy);
-            border-radius: 28px;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.4);
+        .rate-info {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-            z-index: 200;
-            transition: transform 0.1s;
+            gap: 12px;
+            margin-bottom: 24px;
         }
-        .fab:active { transform: scale(0.95); }
+        .rate-pill {
+            background-color: var(--chart-bg);
+            color: var(--accent-teal);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+        .rate-trend { font-size: 12px; color: var(--text-sub); }
 
-        /* --- Bottom Navigation --- */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0; left: 0; width: 100%; z-index: 100;
+        /* Loyalty Gauge (Ethical Retention) */
+        .loyalty-section {
+            border-top: 1px solid var(--divider);
+            padding-top: 16px;
+        }
+        .loyalty-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .l-title { font-size: 11px; font-weight: 700; color: var(--primary-navy); }
+        .l-next { font-size: 11px; color: var(--gold); font-weight: 700; }
+        
+        .gauge-track { background: #F1F5F9; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+        .gauge-fill { background: linear-gradient(90deg, #FCD34D, #D97706); width: 75%; height: 100%; border-radius: 3px; }
+        
+        .l-desc { font-size: 10px; color: var(--text-sub); line-height: 1.4; }
+
+        /* ==================== 
+           CHART (Visualization)
+           ==================== */
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--divider);
+        }
+        .chart-header { display: flex; justify-content: space-between; margin-bottom: 16px; }
+        .ch-title { font-size: 13px; font-weight: 700; }
+        .ch-period { font-size: 11px; color: var(--text-sub); background: #F1F5F9; padding: 2px 8px; border-radius: 10px; }
+        
+        /* CSS Only Simple Chart */
+        .graph-wrap {
+            height: 100px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--divider);
+        }
+        .bar {
+            flex: 1;
+            background: var(--accent-teal);
+            opacity: 0.3;
+            border-radius: 4px 4px 0 0;
+            transition: height 1s;
+        }
+        .bar.active { opacity: 1; background: var(--accent-teal); }
+
+        /* ==================== 
+           TRANSACTIONS
+           ==================== */
+        .list-header { font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-sub); padding: 0 4px; }
+        
+        .trans-item {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--divider);
+        }
+        .ti-icon {
+            width: 40px; height: 40px;
+            background: var(--chart-bg);
+            color: var(--accent-teal);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 14px;
+        }
+        .ti-content { flex: 1; }
+        .ti-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+        .ti-date { font-size: 11px; color: var(--text-sub); }
+        .ti-amount { font-family: 'Roboto Mono'; font-weight: 700; color: var(--primary-navy); }
+        .ti-badge { font-size: 10px; padding: 2px 6px; background: #FEF3C7; color: #92400E; border-radius: 4px; margin-left: 6px; }
+
+        /* --- Bottom Nav --- */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
             background: var(--card-bg); border-top: 1px solid var(--divider);
-            display: flex; justify-content: space-around; padding-bottom: 20px; /* Safe area */
-            height: 80px;
+            display: flex; height: 80px; padding-bottom: 20px; z-index: 200;
         }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-sub); cursor: pointer; }
-        .nav-item.active { color: var(--primary-navy); }
-        .nav-item svg { width: 24px; height: 24px; stroke-width: 2px; }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-sub); cursor: pointer; }
+        .nav-btn.active { color: var(--accent-teal); }
         .nav-label { font-size: 10px; font-weight: 500; }
-
-        /* SVG Icons */
-        .icon { stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        
+        /* Floating Exchange Button */
+        .fab-exchange {
+            position: fixed; bottom: 100px; right: 20px;
+            background: var(--primary-navy); color: white;
+            padding: 12px 20px; border-radius: 30px;
+            font-size: 13px; font-weight: 700;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
+            display: flex; align-items: center; gap: 8px;
+            z-index: 150;
+        }
 
     </style>
 </head>
@@ -168,189 +225,101 @@
 <div class="app-frame">
     
     <header>
-        <div class="header-row">
-            <div class="app-logo">MEDICAL PARTNER</div>
-            <div class="user-badge">循環器内科病棟</div>
+        <div class="header-title">HOSPITAL ASSET</div>
+        <div class="user-rank">
+            <span>★</span> Silver Member
         </div>
     </header>
 
-    <div id="tab-asset" class="tab-content active">
-        <div class="asset-card">
-            <div class="asset-label">Total Estimated Assets</div>
-            <div class="asset-amount">¥ 1,240,500</div>
+    <div id="tab-home" class="tab-content active">
+        
+        <div class="point-card">
+            <div class="pc-label">保有運用ポイント</div>
+            <div class="pc-value">12,500<span class="pc-unit">pts</span></div>
             
-            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                <div>
-                    <div style="font-size:11px; opacity:0.7;">Unit Price</div>
-                    <div style="font-family:'Roboto Mono'; font-size:14px;">@ ¥1,250</div>
-                </div>
-                <div style="color:var(--success-green); font-family:'Roboto Mono'; font-size:14px; display:flex; align-items:center; gap:4px;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-                    +5.2%
-                </div>
+            <div class="rate-info">
+                <span class="rate-pill">Rate: 1.25倍</span>
+                <span class="rate-trend">運用益: +2,500円相当 (↗)</span>
             </div>
 
-            <div class="vesting-container">
-                <div class="vesting-labels">
-                    <span>権利確定済 (65%)</span>
-                    <span>満期まであと 1.5年</span>
+            <div class="loyalty-section">
+                <div class="loyalty-header">
+                    <span class="l-title">NEXT STAGE: GOLD</span>
+                    <span class="l-next">あと 250 pts</span>
                 </div>
-                <div class="progress-track">
-                    <div class="progress-fill"></div>
+                <div class="gauge-track">
+                    <div class="gauge-fill"></div>
                 </div>
-                <div class="vesting-note">※ 今退職すると ¥434,175 の権利を失います</div>
-            </div>
-        </div>
-
-        <div class="section-title">
-            <span>Transaction History</span>
-            <span style="font-size:11px; font-weight:400;">今月</span>
-        </div>
-        <div class="history-list">
-            <div class="history-item">
-                <div class="h-info">
-                    <div class="h-title">病棟目標達成ボーナス</div>
-                    <div class="h-date">2025/10/31 • 在院日数短縮</div>
-                </div>
-                <div class="h-amount plus">+ ¥20,000</div>
-            </div>
-            <div class="history-item">
-                <div class="h-info">
-                    <div class="h-title">Peer Bonus (サンクス)</div>
-                    <div class="h-date">2025/10/31 • 獲得数上位20%</div>
-                </div>
-                <div class="h-amount plus">+ ¥7,500</div>
-            </div>
-            <div class="history-item">
-                <div class="h-info">
-                    <div class="h-title">基本ユニット付与</div>
-                    <div class="h-date">2025/10/25 • 勤続給</div>
-                </div>
-                <div class="h-amount plus">+ ¥5,000</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-team" class="tab-content">
-        <div class="section-title">Team KPI (循環器内科)</div>
-        
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-title">平均在院日数</div>
-                <div class="kpi-value">13.2 <span style="font-size:12px">日</span></div>
-                <div class="kpi-target">
-                    <span>目標: 14.0日</span>
-                    <span class="status-badge">達成</span>
-                </div>
-                <div style="height:4px; background:#E2E8F0; margin-top:8px; border-radius:2px; overflow:hidden;">
-                    <div style="width:90%; height:100%; background:var(--medical-blue);"></div>
-                </div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-title">材料費削減</div>
-                <div class="kpi-value">8.5 <span style="font-size:12px">万円</span></div>
-                <div class="kpi-target">
-                    <span>目標: 5.0万</span>
-                    <span class="status-badge">S評価</span>
-                </div>
-                <div style="height:4px; background:#E2E8F0; margin-top:8px; border-radius:2px; overflow:hidden;">
-                    <div style="width:100%; height:100%; background:var(--success-green);"></div>
+                <div class="l-desc">
+                    ゴールド会員になると、ポイント交換時のレートが <strong>1.5倍</strong> にアップします。
                 </div>
             </div>
         </div>
 
-        <div class="section-title">Stock News (変動要因)</div>
-        <div class="stock-news">
-            <div class="news-item">
-                <span class="news-tag">コスト管理</span>
-                <div class="news-text">ディスポーザブル製品の見直しにより、病棟全体の月間経費が12%圧縮されました。</div>
-                <span class="news-impact">Unit価格 +15円 反映済 📈</span>
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="ch-title">運用レート推移 (病院業績連動)</div>
+                <div class="ch-period">6ヶ月</div>
             </div>
-            <div class="news-item">
-                <span class="news-tag">品質監査</span>
-                <div class="news-text">転倒転落インシデント報告の対応完了率が100%を維持。安全係数が満額付与されました。</div>
-                <span class="news-impact">配当原資係数 1.0x 維持 ✅</span>
+            <div class="graph-wrap">
+                <div class="bar" style="height: 40%"></div>
+                <div class="bar" style="height: 55%"></div>
+                <div class="bar" style="height: 45%"></div>
+                <div class="bar" style="height: 60%"></div>
+                <div class="bar" style="height: 75%"></div>
+                <div class="bar active" style="height: 90%"></div>
             </div>
+            <div style="font-size:11px; color:#64748B; margin-top:8px; text-align:right;">
+                今月のKPI達成によりレート上昇中 📈
+            </div>
+        </div>
+
+        <div class="list-header">最近の変動</div>
+
+        <div class="trans-item">
+            <div class="ti-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div class="ti-content">
+                <div class="ti-title">A病棟 目標達成配当</div>
+                <div class="ti-date">10/31 • 業績連動</div>
+            </div>
+            <div class="ti-amount">+ 800 pts</div>
+        </div>
+
+        <div class="trans-item">
+            <div class="ti-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </div>
+            <div class="ti-content">
+                <div class="ti-title">サンクスカード受信 <span class="ti-badge">x5</span></div>
+                <div class="ti-date">10/30 • 貢献ボーナス</div>
+            </div>
+            <div class="ti-amount">+ 150 pts</div>
         </div>
     </div>
 
-    <div id="tab-feed" class="tab-content">
-        <div class="section-title">Timeline</div>
-        
-        <div class="feed-card">
-            <div class="feed-header">
-                <div class="avatar" style="background:#DBEAFE; color:#1E40AF;">佐</div>
-                <div class="feed-meta">
-                    <div class="feed-names">佐藤 麻衣 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg> <span>田中 優子</span></div>
-                    <div class="feed-time">24分前</div>
-                </div>
-            </div>
-            <div class="tag-pill">#患者ファースト</div>
-            <div class="feed-msg">急変時のルート確保、手伝ってくれて本当に助かりました！冷静な対応さすがです。</div>
-        </div>
-
-        <div class="feed-card">
-            <div class="feed-header">
-                <div class="avatar">高</div>
-                <div class="feed-meta">
-                    <div class="feed-names">高橋 健太 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg> <span>チーム全体</span></div>
-                    <div class="feed-time">2時間前</div>
-                </div>
-            </div>
-            <div class="tag-pill">#業務改善</div>
-            <div class="feed-msg">カートの配置換えの提案、動線がスムーズになってすごく良いです。ありがとう！</div>
-        </div>
-
-         <div class="feed-card">
-            <div class="feed-header">
-                <div class="avatar">鈴</div>
-                <div class="feed-meta">
-                    <div class="feed-names">鈴木 一郎 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg> <span>伊藤 さくら</span></div>
-                    <div class="feed-time">昨日 18:30</div>
-                </div>
-            </div>
-            <div class="tag-pill">#プロフェッショナル</div>
-            <div class="feed-msg">退院指導の資料作り、遅くまでお疲れ様でした。</div>
-        </div>
+    <div class="fab-exchange" onclick="alert('ポイント交換画面へ\n現在の交換可能額: ¥15,625')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        ポイントを使う
     </div>
 
-    <div class="fab" onclick="alert('ここに「感謝を送る」モーダルが開きます')">
-        <svg class="icon" width="24" height="24" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-    </div>
-
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('asset', this)">
-            <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+    <nav class="nav-bar">
+        <div class="nav-btn active">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             <div class="nav-label">資産</div>
         </div>
-        <div class="nav-item" onclick="switchTab('team', this)">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <div class="nav-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             <div class="nav-label">チーム</div>
         </div>
-        <div class="nav-item" onclick="switchTab('feed', this)">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        <div class="nav-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             <div class="nav-label">感謝</div>
         </div>
     </nav>
 
 </div>
-
-<script>
-    function switchTab(tabId, navElement) {
-        // Hide all tabs
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        // Show target tab
-        document.getElementById('tab-' + tabId).classList.add('active');
-
-        // Update nav state
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        navElement.classList.add('active');
-    }
-</script>
 
 </body>
 </html>
