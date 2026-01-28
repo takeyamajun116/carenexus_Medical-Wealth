@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Partner - Integrated System</title>
+    <title>Medical Partner - Amoeba Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* コアカラー定義 */
+            /* Branding Colors */
             --primary: #0F172A;
             --accent: #0D9488;  /* Teal: 資産・信頼 */
             --bg: #F8FAFC;
@@ -19,9 +19,12 @@
             --border: #E2E8F0;
             --gold: #D97706;
             --success: #10B981;
+            --danger: #EF4444;
             --link-blue: #0284C7;
             --calc-bg: #F1F5F9;
             --heart: #E11D48;   /* Pink: 感謝 */
+            --vote-bg: #EEF2FF;
+            --vote-bar: #6366F1;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -66,7 +69,9 @@
         .tab-content.active { display: block; }
         @keyframes fadeIn { from {opacity:0; transform:translateY(3px);} to {opacity:1; transform:translateY(0);} }
 
-        /* --- 1. ASSET TAB STYLES --- */
+        /* ==================== 
+           TAB 1: ASSET (資産)
+           ==================== */
         .asset-card {
             background: var(--card); border-radius: 16px; padding: 24px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border);
@@ -90,37 +95,89 @@
         .li-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
         .li-val { font-weight: 700; font-family: 'Roboto Mono'; }
         
+        /* New: Dynamic Rate Detail */
+        .rate-detail-box {
+            margin-top: 8px; padding: 8px; border: 1px dashed var(--link-blue); 
+            background: #F0F9FF; border-radius: 6px; font-size: 11px; color: var(--sub);
+        }
+        .rd-item { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .rd-plus { color: var(--success); font-weight: 700; }
+
         .next-level { margin-top: 12px; border-top: 1px dashed #CBD5E1; padding-top: 12px; }
         .nl-title { font-size: 11px; font-weight: 700; color: var(--sub); display: flex; justify-content: space-between; }
         .nl-bar-bg { height: 6px; background: #E2E8F0; border-radius: 3px; margin-top: 6px; overflow: hidden; }
         .nl-bar-fill { height: 100%; width: 70%; background: var(--link-blue); }
         .nl-desc { font-size: 10px; color: var(--sub); margin-top: 4px; }
 
-        /* --- 2. TEAM TAB STYLES (Recycled from previous) --- */
-        .kpi-mission-card {
-            background: var(--card); border-radius: 16px; 
-            border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px;
+        /* ==================== 
+           TAB 2: TEAM (Micro P/L & Voting)
+           ==================== */
+        .team-header-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
         }
-        .mission-header {
-            padding: 14px 16px; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .mh-title { font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-        .status-pill { font-size: 10px; background: #DCFCE7; color: #15803D; padding: 3px 8px; border-radius: 12px; font-weight: 700; }
-        .mission-body { padding: 16px; }
-        .kpi-val-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-        .kpi-big { font-family: 'Roboto Mono'; font-size: 24px; font-weight: 700; color: var(--primary); }
-        .kpi-sub { font-size: 11px; color: var(--sub); text-align: right; }
-        .calc-box { background: var(--calc-bg); border-radius: 8px; padding: 12px; margin-top: 12px; }
-        .calc-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--sub); margin-bottom: 4px; }
-        .calc-final { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #CBD5E1; font-size: 13px; font-weight: 700; color: var(--primary); display: flex; justify-content: space-between; }
+        .team-title { font-size: 16px; font-weight: 700; color: var(--primary); }
+        .team-tag { font-size: 10px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 6px; }
 
-        /* --- 3. THANKS TAB STYLES --- */
+        /* Wallet / P/L Card */
+        .pl-card {
+            background: linear-gradient(145deg, #1E293B, #0F172A);
+            color: white; border-radius: 16px; padding: 20px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2); margin-bottom: 24px;
+        }
+        .pl-label { font-size: 11px; opacity: 0.7; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .pl-amount { font-family: 'Roboto Mono'; font-size: 32px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;}
+        .pl-up-arrow { font-size: 16px; color: var(--success); background: rgba(16, 185, 129, 0.2); padding: 2px 6px; border-radius: 4px; }
+
+        .pl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .pl-item { display: flex; flex-direction: column; }
+        .pl-sub-label { font-size: 10px; opacity: 0.6; }
+        .pl-sub-val { font-family: 'Roboto Mono'; font-size: 14px; font-weight: 700; }
+        .val-plus { color: #6EE7B7; } /* Light Green */
+        .val-minus { color: #FCA5A5; } /* Light Red */
+
+        /* Driver Cards (Why Profit Changed) */
+        .driver-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .dc-left { display: flex; align-items: center; gap: 12px; }
+        .dc-icon { 
+            width: 36px; height: 36px; border-radius: 8px; background: #F1F5F9; 
+            display: flex; align-items: center; justify-content: center; color: var(--sub);
+        }
+        .dc-title { font-size: 12px; font-weight: 700; display: block; }
+        .dc-desc { font-size: 10px; color: var(--sub); }
+        .dc-impact { text-align: right; }
+        .impact-val { font-family: 'Roboto Mono'; font-weight: 700; font-size: 13px; }
+        .impact-label { font-size: 9px; color: var(--sub); }
+
+        /* Voting Section */
+        .voting-section {
+            background: var(--vote-bg); border-radius: 12px; padding: 16px;
+            border: 1px solid #C7D2FE; margin-top: 24px;
+        }
+        .vote-header { font-size: 13px; font-weight: 700; color: #3730A3; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        
+        .vote-options { margin-bottom: 12px; }
+        .vote-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: #4338CA; }
+        .vote-bar-bg { height: 10px; background: rgba(255,255,255,0.6); border-radius: 5px; overflow: hidden; display: flex; }
+        .vb-left { height: 100%; background: var(--vote-bar); width: 70%; transition: width 0.5s; }
+        .vb-right { height: 100%; background: #A5B4FC; width: 30%; transition: width 0.5s; }
+        
+        .vote-actions { display: flex; gap: 8px; }
+        .btn-vote { 
+            flex: 1; padding: 8px; border: 1px solid var(--vote-bar); border-radius: 6px; 
+            background: white; color: var(--vote-bar); font-size: 11px; font-weight: 700; cursor: pointer;
+        }
+        .btn-vote.selected { background: var(--vote-bar); color: white; }
+
+        /* ==================== 
+           TAB 3: THANKS (Recycled)
+           ==================== */
         .thanks-header {
             background: linear-gradient(135deg, #FFF1F2, #FFE4E6);
             border-radius: 12px; padding: 16px; margin-bottom: 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            border: 1px solid #FECDD3;
+            display: flex; align-items: center; justify-content: space-between; border: 1px solid #FECDD3;
         }
         .th-text { font-size: 12px; color: #9F1239; font-weight: 700; }
         .th-pts { font-family: 'Roboto Mono'; font-size: 18px; color: #E11D48; font-weight: 700; }
@@ -146,14 +203,12 @@
         .feed-tags { margin-top: 8px; display: flex; gap: 6px; }
         .tag { font-size: 10px; color: var(--accent); background: #F0FDFA; padding: 2px 6px; border-radius: 4px; border: 1px solid #CCFBF1; }
 
-        /* Floating Action Button for Thanks */
         .fab-thanks {
             position: fixed; bottom: 100px; right: 20px;
             background: var(--heart); color: white;
             width: 50px; height: 50px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4);
-            z-index: 150; cursor: pointer; transition: transform 0.1s;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4); z-index: 150; cursor: pointer; transition: transform 0.1s;
         }
         .fab-thanks:active { transform: scale(0.95); }
 
@@ -193,14 +248,21 @@
             
             <div class="level-info">
                 <div class="li-row">
-                    <span>現在の適用レート</span>
-                    <span class="li-val" style="color:var(--link-blue)">1.2倍 (Level III)</span>
-                </div>
-                <div class="li-row">
-                    <span>1ptあたりの価値</span>
-                    <span class="li-val">1.2 円</span>
+                    <span>適用レート (Total)</span>
+                    <span class="li-val" style="color:var(--link-blue)">1.25 倍</span>
                 </div>
                 
+                <div class="rate-detail-box">
+                    <div class="rd-item">
+                        <span>Base (Level III)</span>
+                        <span style="font-weight:700;">1.20</span>
+                    </div>
+                    <div class="rd-item">
+                        <span>Team Profit Boost</span>
+                        <span class="rd-plus">+ 0.05 📈</span>
+                    </div>
+                </div>
+
                 <div class="next-level">
                     <div class="nl-title">
                         <span>NEXT: Level IV (Master)</span>
@@ -210,89 +272,112 @@
                         <div class="nl-bar-fill"></div>
                     </div>
                     <div class="nl-desc">
-                        課題: 「急変時シミュレーション指導」の完了でレートが <strong>1.5倍</strong> にUP
+                        課題: 「急変時シミュレーション指導」完了でBaseレートUP
                     </div>
                 </div>
             </div>
         </div>
 
-        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:10px; padding-left:4px;">最近の収入履歴</div>
-
+        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:10px; padding-left:4px;">Income History</div>
+        
         <div class="feed-item" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
             <div>
-                <div style="font-size:13px; font-weight:700;">チームKPI達成配当</div>
-                <div style="font-size:10px; color:var(--sub);">在院日数短縮ボーナス</div>
+                <div style="font-size:13px; font-weight:700;">チーム配当 (Oct)</div>
+                <div style="font-size:10px; color:var(--sub);">病棟黒字化ボーナス</div>
             </div>
             <div style="font-family:'Roboto Mono'; font-weight:700; color:var(--accent);">+ 6,000 pts</div>
-        </div>
-        <div class="feed-item" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <div style="font-size:13px; font-weight:700;">サンクスポイント受信</div>
-                <div style="font-size:10px; color:var(--sub);">今月の感謝 5件分</div>
-            </div>
-            <div style="font-family:'Roboto Mono'; font-weight:700; color:var(--heart);">+ 250 pts</div>
         </div>
     </div>
 
 
     <div id="tab-team" class="tab-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-            <div style="font-size:18px; font-weight:700;">2025 Oct</div>
-            <div style="font-size:11px; background:#E2E8F0; padding:4px 8px; border-radius:6px;">確定済</div>
+        
+        <div class="team-header-row">
+            <div class="team-title">Team Wallet (循環器)</div>
+            <div class="team-tag">2025 Oct</div>
         </div>
 
-        <div class="kpi-mission-card">
-            <div class="mission-header">
-                <div class="mh-title">
-                    <svg width="16" height="16" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    平均在院日数 (ALOS)
-                </div>
-                <span class="status-pill">GOAL 達成</span>
+        <div class="pl-card">
+            <div class="pl-label">今月のチーム粗利 (分配原資)</div>
+            <div class="pl-amount">
+                ¥ 2,450,000 <span class="pl-up-arrow">↗</span>
             </div>
-            <div class="mission-body">
-                <div class="kpi-val-row">
-                    <div class="kpi-big">13.2<span style="font-size:14px;">日</span></div>
-                    <div class="kpi-sub">Target: 14.0日<br><span style="color:var(--success)">-0.8日 短縮</span></div>
+            <div class="pl-grid">
+                <div class="pl-item">
+                    <span class="pl-sub-label">REVENUE (収益)</span>
+                    <span class="pl-sub-val val-plus">+ ¥48,000,000</span>
                 </div>
-                <div style="height:6px; background:#F1F5F9; border-radius:3px; overflow:hidden;">
-                    <div style="width:100%; height:100%; background:var(--accent);"></div>
-                </div>
-
-                <div class="calc-box">
-                    <div class="calc-row"><span>チーム成果 (短縮分)</span><span style="font-family:'Roboto Mono'">100,000 pts</span></div>
-                    <div class="calc-row"><span>スタッフ配分 (1/20)</span><span style="font-family:'Roboto Mono'">5,000 pts</span></div>
-                    <div class="calc-row"><span>× あなたのLevel係数</span><span style="font-family:'Roboto Mono'; color:var(--link-blue); font-weight:700;">× 1.20</span></div>
-                    <div class="calc-final">
-                        <span>YOU EARNED</span>
-                        <span style="color:var(--accent)">+ 6,000 pts</span>
-                    </div>
+                <div class="pl-item" style="text-align:right;">
+                    <span class="pl-sub-label">COST (人件費/材料)</span>
+                    <span class="pl-sub-val val-minus">- ¥45,550,000</span>
                 </div>
             </div>
         </div>
 
-        <div class="kpi-mission-card">
-            <div class="mission-header">
-                <div class="mh-title">
-                    <svg width="16" height="16" style="color:var(--gold)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    材料費削減
+        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:10px; padding-left:4px;">Profit Drivers (なぜ儲かった？)</div>
+
+        <div class="driver-card">
+            <div class="dc-left">
+                <div class="dc-icon" style="color:var(--accent); background:#F0FDFA;">
+                    <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                 </div>
-                <span class="status-pill" style="background:#FEF3C7; color:#B45309">進行中</span>
+                <div>
+                    <span class="dc-title">在院日数短縮</span>
+                    <span class="dc-desc">Target: 14.0日 → 13.2日</span>
+                </div>
             </div>
-            <div class="mission-body">
-                <div class="kpi-val-row">
-                    <div class="kpi-big">8.5<span style="font-size:14px;">万円</span></div>
-                    <div class="kpi-sub">Target: 5.0万円<br><span style="color:var(--gold)">挑戦中</span></div>
-                </div>
-                <div style="height:6px; background:#F1F5F9; border-radius:3px; overflow:hidden;">
-                    <div style="width:70%; height:100%; background:var(--gold);"></div>
-                </div>
+            <div class="dc-impact">
+                <div class="impact-val val-plus">+ ¥2.1M</div>
+                <div class="impact-label">増収効果</div>
             </div>
         </div>
+
+        <div class="driver-card">
+            <div class="dc-left">
+                <div class="dc-icon" style="color:var(--gold); background:#FFFBEB;">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
+                <div>
+                    <span class="dc-title">材料費削減</span>
+                    <span class="dc-desc">廃棄ロス削減PJ</span>
+                </div>
+            </div>
+            <div class="dc-impact">
+                <div class="impact-val val-plus">+ ¥350k</div>
+                <div class="impact-label">利益創出</div>
+            </div>
+        </div>
+
+        <div class="voting-section">
+            <div class="vote-header">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                利益使途の投票 (締切: 10/31)
+            </div>
+            <div style="font-size:11px; color:#4338CA; margin-bottom:8px;">
+                今月の余剰利益をどう使いますか？
+            </div>
+
+            <div class="vote-options">
+                <div class="vote-row">
+                    <span>ボーナス分配 (70%)</span>
+                    <span>設備投資 (30%)</span>
+                </div>
+                <div class="vote-bar-bg">
+                    <div class="vb-left" id="v-bar-left"></div>
+                    <div class="vb-right" id="v-bar-right"></div>
+                </div>
+            </div>
+
+            <div class="vote-actions">
+                <button class="btn-vote selected" onclick="vote('bonus', this)">💰 ボーナス還元</button>
+                <button class="btn-vote" onclick="vote('invest', this)">🏥 設備投資 (自動血圧計)</button>
+            </div>
+        </div>
+
     </div>
 
 
     <div id="tab-thanks" class="tab-content">
-        
         <div class="thanks-header">
             <div class="th-text">今月もらった「ありがとう」</div>
             <div class="th-pts">Total: 250<span style="font-size:12px; margin-left:2px">pts</span></div>
@@ -334,7 +419,6 @@
         <div class="fab-thanks" onclick="alert('感謝を送る画面を開きます')">
             <svg width="24" height="24" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
         </div>
-
     </div>
 
 
@@ -356,17 +440,29 @@
 </div>
 
 <script>
-    // タブ切り替えロジック
+    // Tab Switching
     function switchTab(tabId, btnElement) {
-        // 1. 全コンテンツを非表示
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        // 2. 指定IDのコンテンツを表示
         document.getElementById('tab-' + tabId).classList.add('active');
-        
-        // 3. ナビボタンのアクティブ状態リセット
         document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-        // 4. クリックされたボタンをアクティブ化
         btnElement.classList.add('active');
+    }
+
+    // Voting Demo Interaction
+    function vote(type, btn) {
+        document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+
+        const leftBar = document.getElementById('v-bar-left');
+        const rightBar = document.getElementById('v-bar-right');
+
+        if(type === 'bonus') {
+            leftBar.style.width = '70%';
+            rightBar.style.width = '30%';
+        } else {
+            leftBar.style.width = '60%'; // Simulate shift
+            rightBar.style.width = '40%';
+        }
     }
 </script>
 
