@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Partner - Team KPI</title>
+    <title>Medical Partner - Integrated System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
+            /* コアカラー定義 */
             --primary: #0F172A;
-            --accent: #0D9488;  /* Teal */
+            --accent: #0D9488;  /* Teal: 資産・信頼 */
             --bg: #F8FAFC;
             --card: #FFFFFF;
             --text: #334155;
@@ -20,9 +21,10 @@
             --success: #10B981;
             --link-blue: #0284C7;
             --calc-bg: #F1F5F9;
+            --heart: #E11D48;   /* Pink: 感謝 */
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -56,87 +58,117 @@
             font-size: 11px; font-weight: 700; color: var(--link-blue); 
             background: #E0F2FE; padding: 4px 10px; border-radius: 20px;
             border: 1px solid rgba(2, 132, 199, 0.2);
+            display: flex; align-items: center; gap: 4px;
         }
 
-        /* --- Tab Logic --- */
-        .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s; }
+        /* --- Tab System --- */
+        .tab-content { display: none; padding: 20px; animation: fadeIn 0.25s ease-out; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from {opacity:0; transform:translateY(5px);} to {opacity:1; transform:translateY(0);} }
+        @keyframes fadeIn { from {opacity:0; transform:translateY(3px);} to {opacity:1; transform:translateY(0);} }
 
-        /* ==================== 
-           TEAM TAB (Enhanced) 
-           ==================== */
-        
-        /* Period Selector */
-        .period-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px;
+        /* --- 1. ASSET TAB STYLES --- */
+        .asset-card {
+            background: var(--card); border-radius: 16px; padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border);
+            margin-bottom: 20px; text-align: center; position: relative; overflow: hidden;
         }
-        .period-title { font-size: 18px; font-weight: 700; color: var(--primary); }
-        .period-tag { font-size: 12px; background: var(--primary); color: white; padding: 4px 10px; border-radius: 6px; }
+        .asset-card::before {
+            content:''; position: absolute; top:0; left:0; width:100%; height:4px;
+            background: linear-gradient(90deg, var(--accent), var(--link-blue));
+        }
+        .total-label { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+        .total-pts { 
+            font-family: 'Roboto Mono', monospace; font-size: 40px; font-weight: 700; color: var(--primary); 
+            letter-spacing: -1px; line-height: 1.2;
+        }
+        .unit { font-size: 16px; margin-left: 4px; color: var(--sub); }
+        
+        .level-info {
+            background: var(--calc-bg); border-radius: 8px; padding: 12px;
+            margin-top: 16px; text-align: left;
+        }
+        .li-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+        .li-val { font-weight: 700; font-family: 'Roboto Mono'; }
+        
+        .next-level { margin-top: 12px; border-top: 1px dashed #CBD5E1; padding-top: 12px; }
+        .nl-title { font-size: 11px; font-weight: 700; color: var(--sub); display: flex; justify-content: space-between; }
+        .nl-bar-bg { height: 6px; background: #E2E8F0; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+        .nl-bar-fill { height: 100%; width: 70%; background: var(--link-blue); }
+        .nl-desc { font-size: 10px; color: var(--sub); margin-top: 4px; }
 
-        /* KPI Card (The "Mission") */
+        /* --- 2. TEAM TAB STYLES (Recycled from previous) --- */
         .kpi-mission-card {
             background: var(--card); border-radius: 16px; 
-            border: 1px solid var(--border); overflow: hidden;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px;
         }
-        
         .mission-header {
-            padding: 16px; border-bottom: 1px solid var(--border);
+            padding: 14px 16px; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
         }
-        .mh-title { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .mh-icon { color: var(--accent); }
+        .mh-title { font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
         .status-pill { font-size: 10px; background: #DCFCE7; color: #15803D; padding: 3px 8px; border-radius: 12px; font-weight: 700; }
+        .mission-body { padding: 16px; }
+        .kpi-val-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+        .kpi-big { font-family: 'Roboto Mono'; font-size: 24px; font-weight: 700; color: var(--primary); }
+        .kpi-sub { font-size: 11px; color: var(--sub); text-align: right; }
+        .calc-box { background: var(--calc-bg); border-radius: 8px; padding: 12px; margin-top: 12px; }
+        .calc-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--sub); margin-bottom: 4px; }
+        .calc-final { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #CBD5E1; font-size: 13px; font-weight: 700; color: var(--primary); display: flex; justify-content: space-between; }
 
-        .mission-body { padding: 20px; }
-        
-        /* Progress Visualization */
-        .kpi-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-        .kpi-main-val { font-family: 'Roboto Mono'; font-size: 28px; font-weight: 700; color: var(--primary); line-height: 1; }
-        .kpi-target { font-size: 11px; color: var(--sub); text-align: right; }
-        
-        .progress-track { height: 8px; background: #F1F5F9; border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
-        .progress-bar { height: 100%; background: var(--accent); border-radius: 4px; width: 0; transition: width 1s ease-out; }
+        /* --- 3. THANKS TAB STYLES --- */
+        .thanks-header {
+            background: linear-gradient(135deg, #FFF1F2, #FFE4E6);
+            border-radius: 12px; padding: 16px; margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid #FECDD3;
+        }
+        .th-text { font-size: 12px; color: #9F1239; font-weight: 700; }
+        .th-pts { font-family: 'Roboto Mono'; font-size: 18px; color: #E11D48; font-weight: 700; }
 
-        /* The "Calculation Receipt" (Cause & Effect) */
-        .calc-box {
-            background: var(--calc-bg); border-radius: 8px; padding: 12px;
-            margin-top: 12px;
+        .feed-item {
+            background: var(--card); padding: 16px; border-radius: 12px;
+            border: 1px solid var(--border); margin-bottom: 12px; position: relative;
         }
-        .calc-row {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 11px; color: var(--sub); margin-bottom: 6px;
+        .feed-top { display: flex; align-items: center; margin-bottom: 8px; }
+        .avatar { 
+            width: 36px; height: 36px; background: #F1F5F9; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 14px; margin-right: 12px; border: 2px solid #FFFFFF; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .calc-row.final {
-            margin-top: 8px; padding-top: 8px; border-top: 1px dashed #CBD5E1;
-            font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 0;
+        .feed-meta { flex: 1; }
+        .feed-name { font-size: 13px; font-weight: 700; color: var(--primary); }
+        .feed-to { font-size: 11px; color: var(--sub); }
+        .feed-point { 
+            background: #FFF1F2; color: #E11D48; font-family: 'Roboto Mono'; 
+            font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; 
         }
-        .calc-val { font-family: 'Roboto Mono'; font-weight: 700; }
-        .calc-highlight { color: var(--accent); }
-        
-        /* Interactive "Why?" Detail */
-        .why-toggle {
-            text-align: center; font-size: 11px; color: var(--link-blue); 
-            margin-top: 12px; cursor: pointer; text-decoration: underline;
-        }
+        .feed-msg { font-size: 13px; line-height: 1.5; color: var(--text); margin-top: 8px; }
+        .feed-tags { margin-top: 8px; display: flex; gap: 6px; }
+        .tag { font-size: 10px; color: var(--accent); background: #F0FDFA; padding: 2px 6px; border-radius: 4px; border: 1px solid #CCFBF1; }
 
-        /* Secondary KPI (Smaller) */
-        .sub-kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .sub-kpi { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
-        .sk-label { font-size: 10px; color: var(--sub); margin-bottom: 4px; }
-        .sk-val { font-family: 'Roboto Mono'; font-size: 16px; font-weight: 700; }
+        /* Floating Action Button for Thanks */
+        .fab-thanks {
+            position: fixed; bottom: 100px; right: 20px;
+            background: var(--heart); color: white;
+            width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4);
+            z-index: 150; cursor: pointer; transition: transform 0.1s;
+        }
+        .fab-thanks:active { transform: scale(0.95); }
 
-        /* --- Nav --- */
+        /* --- Bottom Nav --- */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
             background: var(--card); border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; padding-bottom: 20px; z-index: 200;
         }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--sub); cursor: pointer; }
+        .nav-btn { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            gap: 4px; color: var(--sub); cursor: pointer; transition: color 0.2s;
+        }
         .nav-btn.active { color: var(--accent); }
+        .nav-btn.active svg { stroke-width: 2.5px; }
         .nav-label { font-size: 10px; font-weight: 500; }
         svg { width: 24px; height: 24px; stroke-width: 2px; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -147,60 +179,93 @@
 <div class="app-container">
 
     <header>
-        <div class="app-name">MEDICAL PARTNER</div>
-        <div class="ladder-badge">Level III (Leader)</div>
+        <div class="app-name">HOSPITAL ASSET</div>
+        <div class="ladder-badge">
+            <svg style="width:14px; height:14px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            Level III (Leader)
+        </div>
     </header>
 
-    <div id="tab-team" class="tab-content active">
-        
-        <div class="period-header">
-            <div>
-                <div style="font-size:11px; color:#64748B;">Target Period</div>
-                <div class="period-title">2025 Oct</div>
+    <div id="tab-asset" class="tab-content active">
+        <div class="asset-card">
+            <div class="total-label">保有資産総額</div>
+            <div class="total-pts">18,500<span class="unit">pts</span></div>
+            
+            <div class="level-info">
+                <div class="li-row">
+                    <span>現在の適用レート</span>
+                    <span class="li-val" style="color:var(--link-blue)">1.2倍 (Level III)</span>
+                </div>
+                <div class="li-row">
+                    <span>1ptあたりの価値</span>
+                    <span class="li-val">1.2 円</span>
+                </div>
+                
+                <div class="next-level">
+                    <div class="nl-title">
+                        <span>NEXT: Level IV (Master)</span>
+                        <span>あと 1 チェック</span>
+                    </div>
+                    <div class="nl-bar-bg">
+                        <div class="nl-bar-fill"></div>
+                    </div>
+                    <div class="nl-desc">
+                        課題: 「急変時シミュレーション指導」の完了でレートが <strong>1.5倍</strong> にUP
+                    </div>
+                </div>
             </div>
-            <div class="period-tag">確定済</div>
+        </div>
+
+        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:10px; padding-left:4px;">最近の収入履歴</div>
+
+        <div class="feed-item" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <div style="font-size:13px; font-weight:700;">チームKPI達成配当</div>
+                <div style="font-size:10px; color:var(--sub);">在院日数短縮ボーナス</div>
+            </div>
+            <div style="font-family:'Roboto Mono'; font-weight:700; color:var(--accent);">+ 6,000 pts</div>
+        </div>
+        <div class="feed-item" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <div style="font-size:13px; font-weight:700;">サンクスポイント受信</div>
+                <div style="font-size:10px; color:var(--sub);">今月の感謝 5件分</div>
+            </div>
+            <div style="font-family:'Roboto Mono'; font-weight:700; color:var(--heart);">+ 250 pts</div>
+        </div>
+    </div>
+
+
+    <div id="tab-team" class="tab-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div style="font-size:18px; font-weight:700;">2025 Oct</div>
+            <div style="font-size:11px; background:#E2E8F0; padding:4px 8px; border-radius:6px;">確定済</div>
         </div>
 
         <div class="kpi-mission-card">
             <div class="mission-header">
                 <div class="mh-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    <svg width="16" height="16" style="color:var(--accent)" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     平均在院日数 (ALOS)
                 </div>
                 <span class="status-pill">GOAL 達成</span>
             </div>
-            
             <div class="mission-body">
-                <div class="kpi-row">
-                    <div class="kpi-main-val">13.2<span style="font-size:14px; margin-left:4px;">日</span></div>
-                    <div class="kpi-target">Target: 14.0日<br><span style="color:var(--success)">-0.8日 短縮成功</span></div>
+                <div class="kpi-val-row">
+                    <div class="kpi-big">13.2<span style="font-size:14px;">日</span></div>
+                    <div class="kpi-sub">Target: 14.0日<br><span style="color:var(--success)">-0.8日 短縮</span></div>
                 </div>
-
-                <div class="progress-track">
-                    <div class="progress-bar" style="width: 100%;"></div>
+                <div style="height:6px; background:#F1F5F9; border-radius:3px; overflow:hidden;">
+                    <div style="width:100%; height:100%; background:var(--accent);"></div>
                 </div>
 
                 <div class="calc-box">
-                    <div class="calc-row">
-                        <span>チーム成果 (短縮ボーナス)</span>
-                        <span class="calc-val">100,000 pts</span>
-                    </div>
-                    <div class="calc-row">
-                        <span>÷ スタッフ数 (配分)</span>
-                        <span class="calc-val">÷ 20名</span>
-                    </div>
-                    <div class="calc-row">
-                        <span>× レベル係数 (Level III)</span>
-                        <span class="calc-val calc-highlight">× 1.2倍</span>
-                    </div>
-                    <div class="calc-row final">
+                    <div class="calc-row"><span>チーム成果 (短縮分)</span><span style="font-family:'Roboto Mono'">100,000 pts</span></div>
+                    <div class="calc-row"><span>スタッフ配分 (1/20)</span><span style="font-family:'Roboto Mono'">5,000 pts</span></div>
+                    <div class="calc-row"><span>× あなたのLevel係数</span><span style="font-family:'Roboto Mono'; color:var(--link-blue); font-weight:700;">× 1.20</span></div>
+                    <div class="calc-final">
                         <span>YOU EARNED</span>
-                        <span class="calc-val" style="color:var(--accent)">+ 6,000 pts</span>
+                        <span style="color:var(--accent)">+ 6,000 pts</span>
                     </div>
-                </div>
-                
-                <div class="why-toggle" onclick="alert('詳細画面：\n・早期退院支援件数：15件\n・地域連携パス利用率：85%\n\nチーム全員の協力で達成しました！')">
-                    なぜこの結果が出た？ (詳細)
                 </div>
             </div>
         </div>
@@ -208,69 +273,102 @@
         <div class="kpi-mission-card">
             <div class="mission-header">
                 <div class="mh-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    材料費削減プロジェクト
+                    <svg width="16" height="16" style="color:var(--gold)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    材料費削減
                 </div>
                 <span class="status-pill" style="background:#FEF3C7; color:#B45309">進行中</span>
             </div>
-            
             <div class="mission-body">
-                <div class="kpi-row">
-                    <div class="kpi-main-val">8.5<span style="font-size:14px; margin-left:4px;">万円</span></div>
-                    <div class="kpi-target">Target: 5.0万円<br><span style="color:var(--success)">170% 達成中</span></div>
+                <div class="kpi-val-row">
+                    <div class="kpi-big">8.5<span style="font-size:14px;">万円</span></div>
+                    <div class="kpi-sub">Target: 5.0万円<br><span style="color:var(--gold)">挑戦中</span></div>
                 </div>
-                
-                <div class="progress-track">
-                    <div class="progress-bar" style="width: 100%; background:#F59E0B;"></div>
-                </div>
-
-                <div class="calc-box">
-                    <div class="calc-row">
-                        <span>予測配当プール</span>
-                        <span class="calc-val">50,000 pts</span>
-                    </div>
-                    <div class="calc-row final">
-                        <span>あなたの予測獲得分</span>
-                        <span class="calc-val" style="color:#F59E0B">??? pts</span>
-                    </div>
-                </div>
-                <div style="font-size:10px; color:#94A3B8; margin-top:8px; text-align:right;">
-                    ※ 月末に確定します
+                <div style="height:6px; background:#F1F5F9; border-radius:3px; overflow:hidden;">
+                    <div style="width:70%; height:100%; background:var(--gold);"></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="sub-kpi-grid">
-            <div class="sub-kpi">
-                <div class="sk-label">病床稼働率</div>
-                <div class="sk-val" style="color:var(--primary)">94.5%</div>
-                <div style="font-size:10px; color:var(--success);">Target Clear</div>
+
+    <div id="tab-thanks" class="tab-content">
+        
+        <div class="thanks-header">
+            <div class="th-text">今月もらった「ありがとう」</div>
+            <div class="th-pts">Total: 250<span style="font-size:12px; margin-left:2px">pts</span></div>
+        </div>
+
+        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:10px; padding-left:4px;">フィード</div>
+
+        <div class="feed-item">
+            <div class="feed-top">
+                <div class="avatar" style="background:#E0F2FE; color:#0369A1;">佐</div>
+                <div class="feed-meta">
+                    <div class="feed-name">佐藤 麻衣 <span style="font-weight:400; color:#94A3B8;">→ あなた</span></div>
+                    <div class="feed-to">10/28 14:30</div>
+                </div>
+                <div class="feed-point">+50 pts</div>
             </div>
-            <div class="sub-kpi">
-                <div class="sk-label">インシデント報告</div>
-                <div class="sk-val" style="color:var(--primary)">100%</div>
-                <div style="font-size:10px; color:var(--success);">提出完了</div>
+            <div class="feed-msg">急変時のルート確保、手伝ってくれて助かりました！冷静な対応、Level IIIの貫禄ですね👏</div>
+            <div class="feed-tags">
+                <span class="tag">#チームワーク</span>
+                <span class="tag">#患者安全</span>
             </div>
+        </div>
+
+        <div class="feed-item">
+            <div class="feed-top">
+                <div class="avatar" style="background:#FEF3C7; color:#B45309;">田</div>
+                <div class="feed-meta">
+                    <div class="feed-name">田中 健太 <span style="font-weight:400; color:#94A3B8;">→ チーム全体</span></div>
+                    <div class="feed-to">10/27 09:15</div>
+                </div>
+                <div class="feed-point">+10 pts</div>
+            </div>
+            <div class="feed-msg">カンファレンスの準備ありがとうございました。資料が見やすくて議論がスムーズでした。</div>
+            <div class="feed-tags">
+                <span class="tag">#業務改善</span>
+            </div>
+        </div>
+
+        <div class="fab-thanks" onclick="alert('感謝を送る画面を開きます')">
+            <svg width="24" height="24" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
         </div>
 
     </div>
 
+
     <nav class="bottom-nav">
-        <div class="nav-btn" onclick="alert('資産タブへ')">
+        <div class="nav-btn active" onclick="switchTab('asset', this)">
             <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
             <div class="nav-label">資産</div>
         </div>
-        <div class="nav-btn active">
+        <div class="nav-btn" onclick="switchTab('team', this)">
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             <div class="nav-label">チーム</div>
         </div>
-        <div class="nav-btn" onclick="alert('感謝タブへ')">
+        <div class="nav-btn" onclick="switchTab('thanks', this)">
             <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             <div class="nav-label">感謝</div>
         </div>
     </nav>
 
 </div>
+
+<script>
+    // タブ切り替えロジック
+    function switchTab(tabId, btnElement) {
+        // 1. 全コンテンツを非表示
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        // 2. 指定IDのコンテンツを表示
+        document.getElementById('tab-' + tabId).classList.add('active');
+        
+        // 3. ナビボタンのアクティブ状態リセット
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        // 4. クリックされたボタンをアクティブ化
+        btnElement.classList.add('active');
+    }
+</script>
 
 </body>
 </html>
