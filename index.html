@@ -3,33 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Partner - Tiered Goals</title>
+    <title>Medical Partner - Complete Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Colors */
+            /* Core Colors */
             --primary: #0F172A;
-            --accent: #0D9488;
+            --accent: #0D9488;  /* Teal */
             --bg: #F8FAFC;
             --card: #FFFFFF;
             --text: #334155;
             --sub: #64748B;
             --border: #E2E8F0;
+            --link-blue: #0284C7;
+            
+            /* Status Colors */
+            --success: #10B981;
+            --danger: #EF4444;
+            --heart: #E11D48;
             
             /* Tier Colors */
             --base-bg: #F1F5F9;
-            --base-text: #475569;
             --gold-bg: #FFFBEB;
             --gold-text: #B45309;
             --gold-border: #FCD34D;
             --diamond-bg: #F0F9FF;
             --diamond-text: #0284C7;
             --diamond-border: #7DD3FC;
-            
-            --success: #10B981;
-            --heart: #E11D48;
+
+            /* Vote Colors */
+            --vote-bg: #EEF2FF;
+            --vote-bar: #6366F1;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -63,7 +69,7 @@
         }
         .app-name { font-weight: 700; color: var(--primary); font-size: 14px; letter-spacing: 0.05em; }
         .ladder-badge { 
-            font-size: 11px; font-weight: 700; color: var(--diamond-text); 
+            font-size: 11px; font-weight: 700; color: var(--link-blue); 
             background: #E0F2FE; padding: 4px 10px; border-radius: 20px;
             border: 1px solid rgba(2, 132, 199, 0.2);
             display: flex; align-items: center; gap: 4px;
@@ -75,100 +81,185 @@
         @keyframes fadeIn { from {opacity:0; transform:translateY(3px);} to {opacity:1; transform:translateY(0);} }
 
         /* ==================== 
-           TAB 2: TEAM (TIERED SYSTEM)
+           TAB 1: ASSET (Strengthened)
            ==================== */
-        .team-header-row {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+        .asset-card {
+            background: var(--card); border-radius: 16px; padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border);
+            margin-bottom: 20px; text-align: center; position: relative; overflow: hidden;
         }
+        .asset-card::before {
+            content:''; position: absolute; top:0; left:0; width:100%; height:4px;
+            background: linear-gradient(90deg, var(--accent), var(--link-blue));
+        }
+        .total-label { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+        .total-pts { 
+            font-family: 'Roboto Mono', monospace; font-size: 40px; font-weight: 700; color: var(--primary); 
+            letter-spacing: -1px; line-height: 1.2;
+        }
+        .unit { font-size: 16px; margin-left: 4px; color: var(--sub); }
+
+        /* Asset Details */
+        .asset-detail-container {
+            background: #F8FAFC; border-radius: 12px; padding: 16px; margin-top: 20px;
+            text-align: left; border: 1px solid var(--border);
+        }
+        .ad-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
+        .ad-val { font-family: 'Roboto Mono'; font-weight: 700; }
+        
+        .rate-breakdown {
+            margin-top: 8px; padding-top: 8px; border-top: 1px dashed #CBD5E1;
+        }
+        .rb-item { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: var(--sub); }
+        .rb-val { font-family: 'Roboto Mono'; font-weight: 700; }
+        .rb-plus { color: var(--success); }
+
+        /* Ladder Progress */
+        .ladder-prog { margin-top: 16px; }
+        .lp-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+        .lp-bar-bg { height: 6px; background: #E2E8F0; border-radius: 3px; overflow: hidden; }
+        .lp-bar-fill { height: 100%; width: 80%; background: linear-gradient(90deg, var(--link-blue), var(--accent)); }
+        .lp-desc { font-size: 10px; color: var(--sub); margin-top: 4px; }
+
+        /* History List */
+        .history-list { display: flex; flex-direction: column; gap: 10px; }
+        .h-item { 
+            background: var(--card); padding: 14px; border-radius: 12px; border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .h-left { display: flex; flex-direction: column; }
+        .h-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+        .h-date { font-size: 10px; color: var(--sub); }
+        .h-amount { font-family: 'Roboto Mono'; font-weight: 700; color: var(--accent); }
+
+
+        /* ==================== 
+           TAB 2: TEAM (Amoeba + Tiers)
+           ==================== */
+        .team-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .team-title { font-size: 16px; font-weight: 700; color: var(--primary); }
         .team-tag { font-size: 10px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 6px; }
 
-        /* KPI Card */
+        /* 1. Team Wallet (P/L) - Revived */
+        .pl-card {
+            background: linear-gradient(145deg, #1E293B, #0F172A);
+            color: white; border-radius: 16px; padding: 20px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2); margin-bottom: 24px;
+        }
+        .pl-label { font-size: 11px; opacity: 0.7; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .pl-amount { font-family: 'Roboto Mono'; font-size: 32px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;}
+        .pl-up-arrow { font-size: 16px; color: var(--success); background: rgba(16, 185, 129, 0.2); padding: 2px 6px; border-radius: 4px; }
+
+        .pl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .pl-item { display: flex; flex-direction: column; }
+        .pl-sub-label { font-size: 10px; opacity: 0.6; }
+        .pl-sub-val { font-family: 'Roboto Mono'; font-size: 14px; font-weight: 700; }
+        .val-plus { color: #6EE7B7; } 
+        .val-minus { color: #FCA5A5; }
+
+        /* 2. Tiered Missions - Integrated */
+        .mission-section-title { font-size: 12px; font-weight: 700; color: var(--sub); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        
         .kpi-card {
-            background: var(--card); border-radius: 16px; 
-            border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            background: var(--card); border-radius: 16px; border: 1px solid var(--border); 
+            overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
         .kpi-header {
-            padding: 16px; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            background: #FCFCFC;
+            padding: 14px 16px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; background: #FCFCFC;
         }
         .kh-title { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
         .current-val { font-family: 'Roboto Mono'; font-weight: 700; font-size: 18px; color: var(--primary); }
 
-        /* Tier List */
         .tier-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-        
         .tier-row {
             border-radius: 8px; padding: 12px; display: flex; align-items: center;
             border: 1px solid transparent; position: relative;
         }
+        /* Tier Status Styles */
+        .tier-row.base { background-color: var(--base-bg); border-color: var(--border); opacity: 0.7; }
+        .tier-row.gold { background-color: var(--gold-bg); border-color: var(--gold-border); box-shadow: 0 0 10px rgba(245, 158, 11, 0.1); transform: scale(1.02); z-index: 10; }
+        .tier-row.diamond { background-color: #F8FAFC; border-color: var(--border); color: var(--sub); }
         
-        /* 1. Base (Completed) */
-        .tier-row.base {
-            background-color: var(--base-bg); border-color: var(--border);
-            opacity: 0.7; /* Dimmed because done */
-        }
-        /* 2. Gold (Active) */
-        .tier-row.gold {
-            background-color: var(--gold-bg); border-color: var(--gold-border);
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
-            transform: scale(1.02); z-index: 10;
-        }
-        /* 3. Diamond (Locked) */
-        .tier-row.diamond {
-            background-color: #F8FAFC; border-color: var(--border);
-            color: var(--sub);
-        }
+        .tier-row.gold.active { animation: pulse-gold 2s infinite; }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); } 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); } }
 
-        /* Tier Elements */
-        .t-badge {
-            font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px;
-            width: 65px; text-align: center; margin-right: 12px;
-        }
+        .t-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; width: 65px; text-align: center; margin-right: 12px; }
         .base .t-badge { background: #CBD5E1; color: var(--text); }
         .gold .t-badge { background: #FCD34D; color: #92400E; }
         .diamond .t-badge { background: #E0F2FE; color: #0284C7; border: 1px solid #7DD3FC; }
-
+        
         .t-info { flex: 1; }
         .t-target { font-size: 12px; font-weight: 700; }
         .t-desc { font-size: 10px; margin-top: 2px; }
-        
         .t-reward { text-align: right; }
         .t-pts { font-family: 'Roboto Mono'; font-size: 12px; font-weight: 700; display: block; }
         .t-status { font-size: 10px; font-weight: 700; margin-top: 2px; }
 
-        /* Icons */
-        .status-icon { width: 18px; height: 18px; margin-left: 8px; }
-        
-        /* Animation for active tier */
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        /* P/L Link */
+        .pl-link { padding: 10px 16px; background: var(--calc-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .pl-link-text { font-size: 11px; color: var(--sub); }
+        .pl-link-money { font-family: 'Roboto Mono'; font-weight: 700; font-size: 13px; color: var(--primary); }
+
+        /* 3. Voting Section - Revived */
+        .voting-section {
+            background: var(--vote-bg); border-radius: 12px; padding: 16px;
+            border: 1px solid #C7D2FE; margin-top: 24px;
         }
-        .tier-row.gold.active { animation: pulse-gold 2s infinite; }
+        .vote-header { font-size: 13px; font-weight: 700; color: #3730A3; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .vote-options { margin-bottom: 12px; }
+        .vote-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; color: #4338CA; }
+        .vote-bar-bg { height: 10px; background: rgba(255,255,255,0.6); border-radius: 5px; overflow: hidden; display: flex; }
+        .vb-left { height: 100%; background: var(--vote-bar); width: 70%; transition: width 0.5s; }
+        .vb-right { height: 100%; background: #A5B4FC; width: 30%; transition: width 0.5s; }
+        .vote-actions { display: flex; gap: 8px; }
+        .btn-vote { flex: 1; padding: 10px; border: 1px solid var(--vote-bar); border-radius: 8px; background: white; color: var(--vote-bar); font-size: 12px; font-weight: 700; cursor: pointer; }
+        .btn-vote.selected { background: var(--vote-bar); color: white; }
 
 
-        /* Micro P/L Summary (Moved to bottom of card) */
-        .pl-summary {
-            padding: 12px 16px; background: var(--calc-bg); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
+        /* ==================== 
+           TAB 3: THANKS (Restored to Pink UI)
+           ==================== */
+        .thanks-header {
+            background: linear-gradient(135deg, #FFF1F2, #FFE4E6);
+            border-radius: 12px; padding: 16px; margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: space-between; border: 1px solid #FECDD3;
         }
-        .pl-text { font-size: 11px; color: var(--sub); }
-        .pl-money { font-family: 'Roboto Mono'; font-weight: 700; font-size: 14px; color: var(--primary); }
-
-
-        /* --- Other Styles (Asset, Thanks, Nav) --- */
-        .asset-card { background: var(--card); border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border); margin-bottom: 20px; text-align: center; position: relative; overflow: hidden; }
-        .asset-card::before { content:''; position: absolute; top:0; left:0; width:100%; height:4px; background: linear-gradient(90deg, var(--accent), var(--diamond-text)); }
-        .total-pts { font-family: 'Roboto Mono'; font-size: 40px; font-weight: 700; color: var(--primary); letter-spacing: -1px; }
-        
-        .thanks-header { background: linear-gradient(135deg, #FFF1F2, #FFE4E6); border-radius: 12px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #FECDD3; }
+        .th-text { font-size: 12px; color: #9F1239; font-weight: 700; }
         .th-pts { font-family: 'Roboto Mono'; font-size: 18px; color: var(--heart); font-weight: 700; }
-        .feed-item { background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; }
-        
+
+        .feed-item {
+            background: var(--card); padding: 16px; border-radius: 12px;
+            border: 1px solid var(--border); margin-bottom: 12px; position: relative;
+        }
+        .feed-top { display: flex; align-items: center; margin-bottom: 8px; }
+        .avatar { 
+            width: 36px; height: 36px; background: #F1F5F9; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 14px; margin-right: 12px; border: 2px solid #FFFFFF; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .feed-meta { flex: 1; }
+        .feed-name { font-size: 13px; font-weight: 700; color: var(--primary); }
+        .feed-to { font-size: 11px; color: var(--sub); }
+        .feed-point { 
+            background: #FFF1F2; color: #E11D48; font-family: 'Roboto Mono'; 
+            font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; 
+        }
+        .feed-msg { font-size: 13px; line-height: 1.5; color: var(--text); margin-top: 8px; }
+        .feed-tags { margin-top: 8px; display: flex; gap: 6px; }
+        .tag { font-size: 10px; color: var(--accent); background: #F0FDFA; padding: 2px 6px; border-radius: 4px; border: 1px solid #CCFBF1; }
+
+        .fab-thanks {
+            position: fixed; bottom: 100px; right: 20px;
+            background: var(--heart); color: white;
+            width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4); z-index: 150; cursor: pointer; transition: transform 0.1s;
+        }
+        .fab-thanks:active { transform: scale(0.95); }
+
+
+        /* --- Bottom Nav --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding-bottom: 20px; z-index: 200; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--sub); cursor: pointer; }
         .nav-btn.active { color: var(--accent); }
@@ -184,32 +275,93 @@
         <div class="app-name">HOSPITAL ASSET</div>
         <div class="ladder-badge">
             <svg style="width:14px; height:14px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-            Level III
+            Level III (Leader)
         </div>
     </header>
 
-    <div id="tab-asset" class="tab-content">
+    <div id="tab-asset" class="tab-content active">
         <div class="asset-card">
-            <div style="font-size:12px; color:#64748B;">保有資産総額</div>
-            <div class="total-pts">18,500<span style="font-size:16px; margin-left:4px; color:#64748B;">pts</span></div>
-            <div style="background:#F1F5F9; padding:8px; border-radius:8px; margin-top:16px; font-size:12px; display:flex; justify-content:space-between;">
-                <span>適用レート (Level III)</span>
-                <span style="font-weight:700; font-family:'Roboto Mono';">1.25 倍</span>
+            <div class="total-label">保有資産総額</div>
+            <div class="total-pts">18,500<span class="unit">pts</span></div>
+            
+            <div class="asset-detail-container">
+                <div class="ad-row">
+                    <span>適用レート合計</span>
+                    <span class="ad-val" style="color:var(--link-blue); font-size:16px;">1.25 倍</span>
+                </div>
+                
+                <div class="rate-breakdown">
+                    <div class="rb-item">
+                        <span>Base Rate (Level III)</span>
+                        <span class="rb-val">1.20</span>
+                    </div>
+                    <div class="rb-item">
+                        <span>Team Profit Boost</span>
+                        <span class="rb-val rb-plus">+ 0.05 📈</span>
+                    </div>
+                </div>
+
+                <div class="ladder-prog">
+                    <div class="lp-header">
+                        <span>NEXT: Level IV</span>
+                        <span>あと 1 チェック</span>
+                    </div>
+                    <div class="lp-bar-bg">
+                        <div class="lp-bar-fill"></div>
+                    </div>
+                    <div class="lp-desc">課題: 急変時シミュレーション指導の実施</div>
+                </div>
             </div>
         </div>
-        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:8px;">履歴</div>
-        <div class="feed-item" style="padding:12px; display:flex; justify-content:space-between;">
-            <div style="font-size:13px; font-weight:700;">Base目標達成 (ALOS)</div>
-            <div style="font-family:'Roboto Mono'; font-weight:700; color:var(--accent);">+ 3,000 pts</div>
+
+        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:8px; padding-left:4px;">Income History</div>
+        
+        <div class="history-list">
+            <div class="h-item">
+                <div class="h-left">
+                    <div class="h-title">Gold目標達成 (ALOS)</div>
+                    <div class="h-date">2025/10/28 • チーム業績連動</div>
+                </div>
+                <div class="h-amount">+ 5,000 pts</div>
+            </div>
+            <div class="h-item">
+                <div class="h-left">
+                    <div class="h-title">サンクスポイント受信</div>
+                    <div class="h-date">2025/10/27 • 貢献ボーナス</div>
+                </div>
+                <div class="h-amount" style="color:var(--heart);">+ 250 pts</div>
+            </div>
         </div>
     </div>
 
 
-    <div id="tab-team" class="tab-content active">
+    <div id="tab-team" class="tab-content">
         
         <div class="team-header-row">
-            <div class="team-title">Team Missions</div>
+            <div class="team-title">Team Wallet</div>
             <div class="team-tag">2025 Oct</div>
+        </div>
+
+        <div class="pl-card">
+            <div class="pl-label">今月のチーム粗利 (分配原資)</div>
+            <div class="pl-amount">
+                ¥ 2,450,000 <span class="pl-up-arrow">↗</span>
+            </div>
+            <div class="pl-grid">
+                <div class="pl-item">
+                    <span class="pl-sub-label">REVENUE (収益)</span>
+                    <span class="pl-sub-val val-plus">+ ¥48.0M</span>
+                </div>
+                <div class="pl-item" style="text-align:right;">
+                    <span class="pl-sub-label">COST (人件費/材料)</span>
+                    <span class="pl-sub-val val-minus">- ¥45.5M</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mission-section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Profit Drivers (利益を増やすミッション)
         </div>
 
         <div class="kpi-card">
@@ -222,91 +374,56 @@
             </div>
 
             <div class="tier-list">
-                
                 <div class="tier-row base">
                     <div class="t-badge">BASE</div>
-                    <div class="t-info">
-                        <div class="t-target">Target: 14.5日以下</div>
-                        <div class="t-desc">病棟の基本黒字ライン</div>
-                    </div>
-                    <div class="t-reward">
-                        <span class="t-pts" style="text-decoration:line-through; color:#94A3B8;">3,000pt</span>
-                        <div class="t-status" style="color:var(--success); display:flex; align-items:center; justify-content:flex-end;">
-                            CLEAR <svg class="status-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        </div>
-                    </div>
+                    <div class="t-info"><div class="t-target">Target: 14.5日以下</div></div>
+                    <div class="t-reward"><div class="t-status" style="color:var(--success);">CLEAR ✅</div></div>
                 </div>
-
                 <div class="tier-row gold active">
                     <div class="t-badge">GOLD</div>
                     <div class="t-info">
                         <div class="t-target">Target: 14.0日以下</div>
-                        <div class="t-desc" style="color:#B45309;">あと 0.2日 短縮で達成!</div>
+                        <div class="t-desc" style="color:#B45309;">あと0.2日短縮で達成！</div>
                     </div>
                     <div class="t-reward">
                         <span class="t-pts" style="color:#B45309;">+5,000pt</span>
                         <div class="t-status" style="color:#B45309;">NOW</div>
                     </div>
                 </div>
-
                 <div class="tier-row diamond">
                     <div class="t-badge">DIAMOND</div>
-                    <div class="t-info">
-                        <div class="t-target">Target: 13.0日以下</div>
-                        <div class="t-desc">超黒字ボーナス</div>
-                    </div>
-                    <div class="t-reward">
-                        <span class="t-pts">+10,000pt</span>
-                        <div class="t-status" style="color:#94A3B8; display:flex; align-items:center; justify-content:flex-end;">
-                            LOCKED <svg class="status-icon" style="width:12px;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        </div>
-                    </div>
+                    <div class="t-info"><div class="t-target">Target: 13.0日以下</div></div>
+                    <div class="t-reward"><span class="t-pts">+10,000pt</span><div class="t-status" style="color:#94A3B8;">LOCKED</div></div>
                 </div>
-
             </div>
-
-            <div class="pl-summary">
-                <span class="pl-text">このKPIによるチーム増益額</span>
-                <span class="pl-money">+ ¥1,200,000</span>
+            
+            <div class="pl-link">
+                <span class="pl-link-text">Gold達成時の増益予測</span>
+                <span class="pl-link-money">+ ¥1,200,000</span>
             </div>
         </div>
 
-
-        <div class="kpi-card">
-            <div class="kpi-header">
-                <div class="kh-title">
-                    <svg width="18" height="18" style="color:var(--gold)" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    材料費削減
-                </div>
-                <div class="current-val">¥8.5<span style="font-size:12px; font-weight:400;">万減</span></div>
+        <div class="voting-section">
+            <div class="vote-header">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                利益使途の投票 (締切: 10/31)
             </div>
-
-            <div class="tier-list">
-                
-                <div class="tier-row base">
-                    <div class="t-badge">BASE</div>
-                    <div class="t-info"><div class="t-target">Target: ¥5万 削減</div></div>
-                    <div class="t-reward"><span class="t-pts" style="text-decoration:line-through; color:#94A3B8;">1,000pt</span><div class="t-status" style="color:var(--success);">CLEAR ✅</div></div>
+            <div style="font-size:11px; color:#4338CA; margin-bottom:8px;">
+                今月の余剰利益をどう使いますか？
+            </div>
+            <div class="vote-options">
+                <div class="vote-row">
+                    <span>ボーナス分配 (70%)</span>
+                    <span>設備投資 (30%)</span>
                 </div>
-
-                <div class="tier-row base">
-                    <div class="t-badge" style="background:#FCD34D; color:#92400E;">GOLD</div>
-                    <div class="t-info"><div class="t-target">Target: ¥8万 削減</div></div>
-                    <div class="t-reward"><span class="t-pts" style="text-decoration:line-through; color:#94A3B8;">3,000pt</span><div class="t-status" style="color:var(--success);">CLEAR ✅</div></div>
+                <div class="vote-bar-bg">
+                    <div class="vb-left" id="v-bar-left"></div>
+                    <div class="vb-right" id="v-bar-right"></div>
                 </div>
-
-                <div class="tier-row diamond" style="background:#F0F9FF; border:1px solid #7DD3FC; transform:scale(1.02); z-index:10; box-shadow:0 0 10px rgba(14, 165, 233, 0.2);">
-                    <div class="t-badge">DIAMOND</div>
-                    <div class="t-info">
-                        <div class="t-target">Target: ¥10万 削減</div>
-                        <div class="t-desc" style="color:#0284C7;">あと ¥1.5万 削減！</div>
-                    </div>
-                    <div class="t-reward">
-                        <span class="t-pts" style="color:#0284C7;">+8,000pt</span>
-                        <div class="t-status" style="color:#0284C7;">NOW</div>
-                    </div>
-                </div>
-
+            </div>
+            <div class="vote-actions">
+                <button class="btn-vote selected" onclick="vote('bonus', this)">💰 ボーナス還元</button>
+                <button class="btn-vote" onclick="vote('invest', this)">🏥 設備投資 (自動血圧計)</button>
             </div>
         </div>
 
@@ -315,16 +432,45 @@
 
     <div id="tab-thanks" class="tab-content">
         <div class="thanks-header">
-            <div style="font-size:12px; color:#9F1239; font-weight:700;">今月の感謝</div>
-            <div class="th-pts">250<span style="font-size:12px;">pts</span></div>
+            <div class="th-text">今月もらった「ありがとう」</div>
+            <div class="th-pts">Total: 250<span style="font-size:12px; margin-left:2px">pts</span></div>
         </div>
+
+        <div style="font-size:12px; font-weight:700; color:#64748B; margin-bottom:10px; padding-left:4px;">フィード</div>
+
         <div class="feed-item">
-            <div style="display:flex; align-items:center; margin-bottom:8px;">
-                <div style="width:32px; height:32px; background:#E0F2FE; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:8px;">佐</div>
-                <div style="font-size:13px; font-weight:700;">佐藤 麻衣</div>
-                <div style="margin-left:auto; background:#FFF1F2; color:#E11D48; font-size:11px; padding:2px 6px; border-radius:4px; font-weight:700;">+50 pt</div>
+            <div class="feed-top">
+                <div class="avatar" style="background:#E0F2FE; color:#0369A1;">佐</div>
+                <div class="feed-meta">
+                    <div class="feed-name">佐藤 麻衣 <span style="font-weight:400; color:#94A3B8;">→ あなた</span></div>
+                    <div class="feed-to">10/28 14:30</div>
+                </div>
+                <div class="feed-point">+50 pts</div>
             </div>
-            <div style="font-size:12px;">シフト交代ありがとうございました！助かりました。</div>
+            <div class="feed-msg">急変時のルート確保、手伝ってくれて助かりました！冷静な対応、Level IIIの貫禄ですね👏</div>
+            <div class="feed-tags">
+                <span class="tag">#チームワーク</span>
+                <span class="tag">#患者安全</span>
+            </div>
+        </div>
+
+        <div class="feed-item">
+            <div class="feed-top">
+                <div class="avatar" style="background:#FEF3C7; color:#B45309;">田</div>
+                <div class="feed-meta">
+                    <div class="feed-name">田中 健太 <span style="font-weight:400; color:#94A3B8;">→ チーム全体</span></div>
+                    <div class="feed-to">10/27 09:15</div>
+                </div>
+                <div class="feed-point">+10 pts</div>
+            </div>
+            <div class="feed-msg">カンファレンスの準備ありがとうございました。資料が見やすくて議論がスムーズでした。</div>
+            <div class="feed-tags">
+                <span class="tag">#業務改善</span>
+            </div>
+        </div>
+
+        <div class="fab-thanks" onclick="alert('感謝を送る画面を開きます')">
+            <svg width="24" height="24" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
         </div>
     </div>
 
@@ -352,6 +498,19 @@
         document.getElementById('tab-' + tabId).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
+    }
+
+    // Voting Interaction
+    function vote(type, btn) {
+        document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        const leftBar = document.getElementById('v-bar-left');
+        const rightBar = document.getElementById('v-bar-right');
+        if(type === 'bonus') {
+            leftBar.style.width = '70%'; rightBar.style.width = '30%';
+        } else {
+            leftBar.style.width = '60%'; rightBar.style.width = '40%';
+        }
     }
 </script>
 
